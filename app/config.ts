@@ -12,5 +12,5 @@ export const socialLinks = {
   github: "https://github.com/JonathanSeriesX",
   instagram: "https://www.instagram.com/JonathanSeriesX",
   linkedin: "https://www.linkedin.com/in/jonathunky",
-  //email: "mailto:example@gmail.com",
+  email: "mailto:example@gmail.com",
 };

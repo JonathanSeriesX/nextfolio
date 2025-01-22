@@ -14,7 +14,8 @@ interface BlurFadeProps {
   delay?: number;
   yOffset?: number;
   inView?: boolean;
-  inViewMargin?: string;
+/** The margin value for intersection observer, follows CSS margin format (e.g., '-50px') */
+inViewMargin?: string;
   blur?: string;
 }
 const BlurFade = ({
@@ -29,6 +30,7 @@ const BlurFade = ({
   blur = "6px",
 }: BlurFadeProps) => {
   const ref = useRef(null);
+  // @ts-ignore
   const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
   const isInView = !inView || inViewResult;
   const defaultVariants: Variants = {

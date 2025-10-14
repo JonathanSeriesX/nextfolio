@@ -1,8 +1,31 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      {/* TOP NAV — add this small block */}
+      <nav className="row-start-1 w-full max-w-5xl flex items-center justify-between text-sm text-neutral-300">
+        <Link
+          href="/"
+          className="font-semibold tracking-tight text-neutral-100"
+        >
+          nextfolio
+        </Link>
+        <div className="flex gap-4">
+          <Link href="/photography" className="hover:underline">
+            Photography
+          </Link>
+          <Link href="/playlists" className="hover:underline">
+            Playlists
+          </Link>
+          <Link href="/projects" className="hover:underline">
+            Projects
+          </Link>
+        </div>
+      </nav>
+      {/* END NAV */}
+
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"

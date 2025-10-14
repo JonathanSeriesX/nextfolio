@@ -1,3 +1,5 @@
+// config of nav bar and nav menu items
+
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {

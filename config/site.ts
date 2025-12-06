@@ -64,8 +64,8 @@ export const siteConfig = {
   links: {
     github: "https://github.com/JonathanSeriesX",
     twitter: "https://twitter.com/JonathanSeriesX",
-    docs: "https://heroui.com",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
+    //docs: "https://heroui.com",
+    //discord: "https://discord.gg/9b6yyZKmH4",
+    //sponsor: "https://patreon.com/jrgarciadev",
   },
 };

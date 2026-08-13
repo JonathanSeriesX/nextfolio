@@ -10,7 +10,7 @@ const cycleWords = [
 const tabs = [
   { id: "tab-projects", label: "Pet projects" },
   { id: "tab-interests", label: "Interests" },
-  { id: "tab-work", label: "Professional experience" },
+  { id: "tab-work", label: "Experience" },
   { id: "tab-education", label: "Education" },
 ];
 
@@ -75,7 +75,7 @@ const education = [
 export default function Home() {
   return (
     <article className="flex flex-col">
-      <section className="pt-6 pb-14 sm:pt-14">
+      <section className="stagger pt-6 pb-14 sm:pt-14">
         <h1>
           Hi there, my name is Evgenii.
           <br />
@@ -98,14 +98,14 @@ export default function Home() {
           </p>
           <p>
             I like infrastructure that is small, legible, and built to be
-            repaired — the fewer moving parts, the better. This site, for
-            instance, ships zero JavaScript to your browser: even the tabs
-            below are pure CSS.
+            repaired — the fewer moving parts, the better. This site ships
+            almost no JavaScript: the tabs below are pure CSS, and the only
+            script on the page runs the theme switch.
           </p>
         </div>
       </section>
 
-      <section className="tabs section">
+      <section className="tabs section stagger">
         {tabs.map((tab, i) => (
           <input
             key={tab.id}
@@ -116,7 +116,8 @@ export default function Home() {
             className="tab-input"
           />
         ))}
-        <nav className="tab-nav">
+        <nav className="tab-bar" aria-label="Sections">
+          <span className="tab-thumb" aria-hidden />
           {tabs.map((tab) => (
             <label key={tab.id} htmlFor={tab.id}>
               {tab.label}

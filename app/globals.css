@@ -1,225 +1,233 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-sans: var(--font-tofino), ui-sans-serif, system-ui, sans-serif;
-}
+/* Design language ported from superlogical.com: olive-tinted paper/ink
+   palette, fluid restrained type scale, hairline rules, muted section
+   labels, grain overlay. */
 
 :root {
-  --site-accent: #e3504f;
-  --site-fg: rgb(15 18 28);
-  --site-fg-muted: rgb(15 18 28 / 0.6);
-  --site-bg: rgb(250 250 250);
+  --paper: #f7f4ef;
+  --ink: #1d1a16;
+  --muted: #7b746f;
+  --rule: #1d1a161f;
+  --accent: #e3504f;
+  --glow-a: #e3504f24;
+  --glow-b: #f5a62333;
+
+  --text-body: min(calc(0.3 * 1.2vw + 1rem), 1.54rem);
+  --text-h1: max(
+    calc(var(--text-body) * 1.4),
+    min(calc(1.25 * 1.2vw + 0.5rem), 2.75rem)
+  );
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --site-accent: #ff4d4d;
-    --site-fg: rgb(255 255 255 / 0.9);
-    --site-fg-muted: rgb(255 255 255 / 0.55);
-    --site-bg: rgb(17 17 17);
+    --paper: #131110;
+    --ink: #eceae7;
+    --muted: #b3b3b3;
+    --rule: #eceae724;
+    --accent: #ff4d4d;
+    --glow-a: #ff4d4d2e;
+    --glow-b: #b3541e33;
   }
+}
+
+@theme inline {
+  --font-sans: var(--font-tofino), -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
 }
 
 html {
-  background: var(--site-bg);
+  background: var(--paper);
+}
+
+/* warm gradient wash behind everything, à la superlogical's NoiseGradient */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 12% -5%, var(--glow-a), transparent 70%),
+    radial-gradient(45% 38% at 88% 0%, var(--glow-b), transparent 70%);
 }
 
 body {
-  color: var(--site-fg);
-  font-stretch: 101%;
-  font-weight: 330;
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: var(--text-h1);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
 }
 
 @layer components {
-  /* Frosted-glass shell, badges and image well lifted from everycase's
-     Case Cards (VerticalCarousel.module.css) so both sites share a look. */
-  .glass-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 35px;
-    padding: 0.9rem;
-    background: rgba(252, 248, 250, 0.64);
-    box-shadow:
-      0 35px 70px rgba(50, 42, 48, 0.2),
-      0 4px 14px rgba(50, 42, 48, 0.09);
-    -webkit-backdrop-filter: blur(42px) saturate(145%);
-    backdrop-filter: blur(42px) saturate(145%);
+  .link {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
     transition:
-      transform 160ms ease,
-      box-shadow 180ms ease;
+      text-decoration-color 150ms ease,
+      color 150ms ease;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .glass-card:hover {
-      transform: scale(1.02);
-      box-shadow:
-        0 30px 64px rgba(50, 42, 48, 0.22),
-        0 4px 14px rgba(50, 42, 48, 0.1);
+  .link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .mono {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8em;
+    letter-spacing: 0;
+  }
+
+  /* label + content section, superlogical style */
+  .section {
+    border-top: 1px solid var(--rule);
+    padding-block: 2.5rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .section {
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: 2rem;
     }
   }
 
-  .image-shell {
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.95),
-      rgba(229, 239, 255, 0.5)
-    );
-    overflow: hidden;
-    box-shadow: inset 0 1px 15px rgba(15, 18, 28, 0.08);
+  .section-label {
+    color: var(--accent);
   }
 
-  .card-title {
-    display: block;
-    font-weight: 550;
-    letter-spacing: 0.01em;
-    text-align: center;
-    color: var(--site-accent);
-  }
-
-  .card-subtitle {
-    display: block;
-    text-align: center;
-    font-size: 0.8rem;
-    opacity: 0.65;
-    margin-top: 0.25rem;
-  }
-
-  .card-link {
+  .prose-col {
+    max-width: 62ch;
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
-    text-decoration: none;
-    color: inherit;
-    -webkit-tap-highlight-color: transparent;
+    gap: 1.1em;
   }
 
-  .card-track {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(min(165px, (100% - 1.15rem) / 2), 1fr)
-    );
-    gap: 0.9rem clamp(0.9rem, 2vw, 1.15rem);
-    justify-items: left;
+  .entry-no {
+    color: var(--accent);
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.7em;
+    margin-right: 0.9em;
+    position: relative;
+    top: -0.15em;
   }
 
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.35rem;
-    margin-top: 0.6rem;
-    padding: 0 0.25rem 0.25rem;
+  .entry-name {
+    font-weight: 500;
   }
 
-  .tab-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.25rem;
+  .entry-meta {
+    color: var(--muted);
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.7em;
+    margin-left: 0.9em;
   }
 
-  .tab-pill {
-    padding: 0.3rem 0.85rem;
-    border-radius: 9999px;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
-    background: #fff;
-    border: 1px solid rgba(15, 18, 28, 0.12);
-    color: rgba(15, 18, 28, 0.85);
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      background 120ms ease,
-      color 120ms ease;
+  .entry-bio {
+    color: var(--muted);
+    margin-top: 0.15em;
   }
 
-  .tab-pill[data-active="true"] {
-    background: #e3504f;
-    border-color: #e3504f;
-    color: #fff;
-    font-weight: 550;
-  }
-
-  .pill {
+  /* cycling word list in the hero, pure CSS */
+  .cycler {
     display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 9999px;
-    font-size: 0.8rem;
-    letter-spacing: 0.02em;
-    background-color: #fff;
-    border: 1px solid rgba(15, 18, 28, 0.12);
-    color: rgba(15, 18, 28, 0.85);
-    white-space: nowrap;
-    text-decoration: none;
+    overflow: hidden;
+    height: 1.15em;
+    vertical-align: bottom;
   }
 
-  a.pill {
-    color: var(--site-accent);
+  .cycler-track {
+    display: flex;
+    flex-direction: column;
+    color: var(--accent);
+    animation: cycle 14s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
-  .accent-link {
-    color: var(--site-accent);
-    font-weight: 450;
-    text-decoration: none;
+  .cycler-track > span {
+    display: block;
+    height: 1.15em;
   }
 
-  .accent-link:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+  @keyframes cycle {
+    0%,
+    11% {
+      transform: translateY(0);
+    }
+    14.28%,
+    25.4% {
+      transform: translateY(-1.15em);
+    }
+    28.57%,
+    39.7% {
+      transform: translateY(-2.3em);
+    }
+    42.85%,
+    54% {
+      transform: translateY(-3.45em);
+    }
+    57.14%,
+    68.3% {
+      transform: translateY(-4.6em);
+    }
+    71.42%,
+    82.5% {
+      transform: translateY(-5.75em);
+    }
+    85.71%,
+    100% {
+      transform: translateY(-6.9em);
+    }
   }
 
-  @media (prefers-color-scheme: dark) {
-    .glass-card {
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.28),
-          rgba(255, 255, 255, 0.04)
-        ),
-        rgba(26, 28, 33, 0.42);
-      box-shadow: 0 25px 50px rgba(4, 9, 18, 0.55);
+  @media (prefers-reduced-motion: reduce) {
+    .cycler-track {
+      animation: none;
     }
+  }
 
-    .glass-card:hover {
-      box-shadow: 0 20px 45px rgba(8, 8, 10, 0.65);
-    }
-
-    .image-shell {
-      background: radial-gradient(
-        circle at 30% 20%,
-        rgba(255, 255, 255, 0.42),
-        rgba(255, 255, 255, 0.05)
-      );
-      box-shadow: inset 0 1px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    .pill {
-      background: rgba(19, 19, 22, 0.92);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    a.pill {
-      color: var(--site-accent);
-    }
-
-    .tab-pill {
-      background: rgba(19, 19, 22, 0.92);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    .tab-pill[data-active="true"] {
-      background: #e3504f;
-      border-color: #e3504f;
-      color: #fff;
-    }
+  /* grain overlay */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0.55;
+    image-rendering: pixelated;
+    background-repeat: repeat;
+    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }

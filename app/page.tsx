@@ -1,34 +1,127 @@
-import { Showcase } from "./showcase";
+const cycleWords = [
+  "all sorts of people.",
+  "big banks.",
+  "trading floors.",
+  "Apple collectors.",
+  "tweet archivists.",
+  "something secret.",
+];
+
+const professional = [
+  {
+    name: "Libertex Group",
+    meta: "SRE · 2022–2024 · Podgorica",
+    bio: "Led incident resolution for live trading systems — tuning ELK, Dynatrace, and Prometheus/Grafana until diagnosis took minutes, not hours. Ran production workloads on Docker and Kubernetes, optimised AWS for cost and fault tolerance, and automated CI/CD with Jenkins and GitLab across web and mobile.",
+  },
+  {
+    name: "BNP Paribas",
+    meta: "SRE · 2024–2025 · Porto",
+    bio: "Sharpened monitoring and alerting inside one of Europe's largest banking groups: refined Grafana dashboards and alert rules for faster incident detection, automated internal workflows with Ansible, and cut the vulnerability backlog by 36% through triage and targeted upgrades.",
+  },
+  {
+    name: "Something special",
+    meta: "2026 · under NDA",
+    bio: "What I'm doing now. All I can say is: it's special, and I can't wait to show you.",
+  },
+];
+
+const personal = [
+  {
+    name: "EveryCase",
+    href: "https://everycase.org",
+    bio: "An open database of (nearly) every case Apple has ever made — every colour, every season, every SKU. Built end-to-end with Next.js, tuned to sub-second first paint, and engineered to cost exactly nothing to run.",
+  },
+  {
+    name: "Twixodus",
+    href: "https://github.com/JonathanSeriesX/dayoneXtwitter",
+    bio: "A Swift app (born a Python script) that migrates your Twitter archive into Day One — dates, media, and dignity preserved, with local LLM processing for privacy-friendly categorisation of your old tweets.",
+  },
+  {
+    name: "Off duty",
+    bio: "A home lab that is forever one component away from perfect, digital photography, indie games, Formula 1, and getting around Lisbon on anything with fewer than four wheels.",
+  },
+];
 
 export default function Home() {
   return (
-    <article className="flex flex-col gap-10 py-8 sm:py-14">
-      <section className="flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="max-w-md">
-          <h1 className="text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
-            Hi there, my name is{" "}
-            <span style={{ color: "var(--site-accent)" }}>Evgenii</span>.
-          </h1>
-          <p
-            className="mt-5 text-lg"
-            style={{ color: "var(--site-fg-muted)" }}
-          >
-            Software engineer in Porto, Portugal. I build things for the web —
-            and occasionally for myself.
-          </p>
-        </div>
-        <div
-          aria-label="Photo of Evgenii, coming soon"
-          className="image-shell aspect-square w-36 shrink-0 text-center text-sm sm:w-44"
-          style={{ color: "var(--site-fg-muted)" }}
-        >
-          photo of me,
+    <article className="flex flex-col">
+      <section className="pt-6 pb-14 sm:pt-14">
+        <h1>
+          Hi there, my name is Evgenii.
           <br />
-          eventually
+          I keep things running for{" "}
+          <span className="cycler" aria-label="all sorts of people.">
+            <span className="cycler-track" aria-hidden>
+              {[...cycleWords, cycleWords[0]].map((word, i) => (
+                <span key={i}>{word}</span>
+              ))}
+            </span>
+          </span>
+        </h1>
+        <div className="prose-col mt-10 text-muted">
+          <p>
+            I&apos;m a site reliability &amp; DevOps engineer in Lisbon,
+            Portugal. I&apos;ve spent the last years keeping trading platforms
+            and banking systems observable, automated, and pleasantly boring —
+            Grafana dashboards, Kubernetes clusters, Ansible playbooks, and
+            the occasional 3 a.m. incident.
+          </p>
+          <p>
+            I like infrastructure that is small, legible, and built to be
+            repaired — the fewer moving parts, the better. This site, for
+            instance, ships zero JavaScript to your browser.
+          </p>
         </div>
       </section>
 
-      <Showcase />
+      <section className="section">
+        <p className="section-label">Professional</p>
+        <ul className="prose-col">
+          {professional.map((entry, i) => (
+            <li key={entry.name}>
+              <span className="entry-no">{i + 1}</span>
+              <span className="entry-name">{entry.name}</span>
+              <span className="entry-meta">{entry.meta}</span>
+              <p className="entry-bio">{entry.bio}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="section">
+        <p className="section-label">Personal</p>
+        <ul className="prose-col">
+          {personal.map((entry) => (
+            <li key={entry.name}>
+              {entry.href ? (
+                <a href={entry.href} className="link entry-name">
+                  {entry.name}
+                </a>
+              ) : (
+                <span className="entry-name">{entry.name}</span>
+              )}
+              <p className="entry-bio">{entry.bio}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="section">
+        <p className="section-label">Education</p>
+        <div className="prose-col">
+          <p>
+            <span className="entry-name">
+              BSc in Information Security
+            </span>
+            <span className="entry-meta">2016–2020 · Saint Petersburg</span>
+            <span className="entry-bio block">
+              Saint Petersburg State University of Aerospace Instrumentation —
+              encryption, steganography, PKI, signal processing, and just
+              enough x86 assembly to be dangerous.
+            </span>
+          </p>
+        </div>
+      </section>
     </article>
   );
 }

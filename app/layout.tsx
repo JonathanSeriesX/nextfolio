@@ -8,22 +8,14 @@ const tofino = localFont({
   variable: "--font-tofino",
   display: "swap",
   weight: "100 800",
-  style: "oblique 0deg 1deg",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://evgenii.org"),
   title: "Evgenii Ostrovskii",
   description:
-    "Personal website of Evgenii Ostrovskii — software engineer in Porto, Portugal.",
+    "Personal website of Evgenii Ostrovskii — site reliability & DevOps engineer in Lisbon, Portugal.",
 };
-
-const socials = [
-  { label: "GitHub", href: "https://github.com/JonathanSeriesX" },
-  { label: "X", href: "https://twitter.com/JonathanSeriesX" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/jonathunky" },
-  { label: "YouTube", href: "https://www.youtube.com/@intensifiedhipster" },
-];
 
 export default function RootLayout({
   children,
@@ -32,32 +24,39 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={tofino.variable}>
-      <body className="flex min-h-dvh flex-col font-sans antialiased">
-        <header className="mx-auto flex w-full max-w-3xl flex-wrap items-baseline justify-between gap-x-6 gap-y-3 px-6 py-8">
-          <span className="font-semibold whitespace-nowrap tracking-tight">
-            Evgenii Ostrovskii
-          </span>
-          <nav className="flex flex-wrap gap-1.5">
-            {socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noreferrer"
-                className="pill"
-              >
-                {s.label}
+      <body className="flex min-h-dvh flex-col bg-paper font-sans antialiased">
+        <div className="grain" aria-hidden />
+        <div className="mx-auto flex w-full max-w-3xl grow flex-col px-6">
+          <header className="py-10">
+            <span className="font-medium">Evgenii Ostrovskii</span>
+          </header>
+          <main className="grow">{children}</main>
+          <footer className="section mt-16 !grid-cols-1 text-muted">
+            <nav className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+              <a href="https://github.com/JonathanSeriesX" className="link">
+                GitHub
               </a>
-            ))}
-          </nav>
-        </header>
-        <main className="mx-auto w-full max-w-3xl grow px-6">{children}</main>
-        <footer
-          className="mx-auto w-full max-w-3xl px-6 py-8 text-sm"
-          style={{ color: "var(--site-fg-muted)" }}
-        >
-          © {new Date().getFullYear()} Evgenii Ostrovskii · Porto, Portugal
-        </footer>
+              <a href="https://twitter.com/JonathanSeriesX" className="link">
+                X
+              </a>
+              <a href="https://linkedin.com/in/jonathunky" className="link">
+                LinkedIn
+              </a>
+              <a
+                href="https://www.youtube.com/@intensifiedhipster"
+                className="link"
+              >
+                YouTube
+              </a>
+              <a href="mailto:cv@evgenii.org" className="link">
+                Email
+              </a>
+              <span className="mono ml-auto">
+                lisbon, pt · open to relocation
+              </span>
+            </nav>
+          </footer>
+        </div>
       </body>
     </html>
   );

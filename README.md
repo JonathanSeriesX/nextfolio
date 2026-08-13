@@ -1,7 +1,10 @@
-# Personal website
+# evgenii.org
 
-Work in progress!
+Personal website of Evgenii Ostrovskii.
 
-Based on Next.js & HeroUI [Template](https://github.com/heroui-inc/next-app-template)
+Next.js + Tailwind CSS, nothing else. Design inspired by [Alpine](https://alpine.nuxt.space).
 
-Which is licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+```sh
+pnpm install
+pnpm dev
+```

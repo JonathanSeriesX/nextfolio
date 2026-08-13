@@ -1,48 +1,34 @@
-import { Link } from "@heroui/link";
-import { Snippet } from "@heroui/snippet";
-import { Code } from "@heroui/code";
-import { button as buttonStyles } from "@heroui/theme";
-
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+import { Showcase } from "./showcase";
 
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title({ color: "violet" })}>work in progress</span>
-      </div>
-      {/* 
-      <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
+    <article className="flex flex-col gap-10 py-8 sm:py-14">
+      <section className="flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-md">
+          <h1 className="text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
+            Hi there, my name is{" "}
+            <span style={{ color: "var(--site-accent)" }}>Evgenii</span>.
+          </h1>
+          <p
+            className="mt-5 text-lg"
+            style={{ color: "var(--site-fg-muted)" }}
+          >
+            Software engineer in Porto, Portugal. I build things for the web —
+            and occasionally for myself.
+          </p>
+        </div>
+        <div
+          aria-label="Photo of Evgenii, coming soon"
+          className="image-shell aspect-square w-36 shrink-0 text-center text-sm sm:w-44"
+          style={{ color: "var(--site-fg-muted)" }}
         >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
-      </div>
+          photo of me,
+          <br />
+          eventually
+        </div>
+      </section>
 
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
-      </div>*/}
-    </section>
+      <Showcase />
+    </article>
   );
 }

@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-tofino), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --site-accent: #e3504f;
+  --site-fg: rgb(15 18 28);
+  --site-fg-muted: rgb(15 18 28 / 0.6);
+  --site-bg: rgb(250 250 250);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --site-accent: #ff4d4d;
+    --site-fg: rgb(255 255 255 / 0.9);
+    --site-fg-muted: rgb(255 255 255 / 0.55);
+    --site-bg: rgb(17 17 17);
+  }
+}
+
+html {
+  background: var(--site-bg);
+}
+
+body {
+  color: var(--site-fg);
+  font-stretch: 101%;
+  font-weight: 330;
+}
+
+@layer components {
+  /* Frosted-glass shell, badges and image well lifted from everycase's
+     Case Cards (VerticalCarousel.module.css) so both sites share a look. */
+  .glass-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 35px;
+    padding: 0.9rem;
+    background: rgba(252, 248, 250, 0.64);
+    box-shadow:
+      0 35px 70px rgba(50, 42, 48, 0.2),
+      0 4px 14px rgba(50, 42, 48, 0.09);
+    -webkit-backdrop-filter: blur(42px) saturate(145%);
+    backdrop-filter: blur(42px) saturate(145%);
+    transition:
+      transform 160ms ease,
+      box-shadow 180ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .glass-card:hover {
+      transform: scale(1.02);
+      box-shadow:
+        0 30px 64px rgba(50, 42, 48, 0.22),
+        0 4px 14px rgba(50, 42, 48, 0.1);
+    }
+  }
+
+  .image-shell {
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.95),
+      rgba(229, 239, 255, 0.5)
+    );
+    overflow: hidden;
+    box-shadow: inset 0 1px 15px rgba(15, 18, 28, 0.08);
+  }
+
+  .card-title {
+    display: block;
+    font-weight: 550;
+    letter-spacing: 0.01em;
+    text-align: center;
+    color: var(--site-accent);
+  }
+
+  .card-subtitle {
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.65;
+    margin-top: 0.25rem;
+  }
+
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card-track {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(165px, (100% - 1.15rem) / 2), 1fr)
+    );
+    gap: 0.9rem clamp(0.9rem, 2vw, 1.15rem);
+    justify-items: left;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+    padding: 0 0.25rem 0.25rem;
+  }
+
+  .tab-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tab-pill {
+    padding: 0.3rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    background: #fff;
+    border: 1px solid rgba(15, 18, 28, 0.12);
+    color: rgba(15, 18, 28, 0.85);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background 120ms ease,
+      color 120ms ease;
+  }
+
+  .tab-pill[data-active="true"] {
+    background: #e3504f;
+    border-color: #e3504f;
+    color: #fff;
+    font-weight: 550;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    background-color: #fff;
+    border: 1px solid rgba(15, 18, 28, 0.12);
+    color: rgba(15, 18, 28, 0.85);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  a.pill {
+    color: var(--site-accent);
+  }
+
+  .accent-link {
+    color: var(--site-accent);
+    font-weight: 450;
+    text-decoration: none;
+  }
+
+  .accent-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-card {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.28),
+          rgba(255, 255, 255, 0.04)
+        ),
+        rgba(26, 28, 33, 0.42);
+      box-shadow: 0 25px 50px rgba(4, 9, 18, 0.55);
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 20px 45px rgba(8, 8, 10, 0.65);
+    }
+
+    .image-shell {
+      background: radial-gradient(
+        circle at 30% 20%,
+        rgba(255, 255, 255, 0.42),
+        rgba(255, 255, 255, 0.05)
+      );
+      box-shadow: inset 0 1px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .pill {
+      background: rgba(19, 19, 22, 0.92);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    a.pill {
+      color: var(--site-accent);
+    }
+
+    .tab-pill {
+      background: rgba(19, 19, 22, 0.92);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .tab-pill[data-active="true"] {
+      background: #e3504f;
+      border-color: #e3504f;
+      color: #fff;
+    }
+  }
+}

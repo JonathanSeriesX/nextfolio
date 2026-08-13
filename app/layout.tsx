@@ -1,31 +1,29 @@
-import "@/styles/globals.css";
-import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
-import clsx from "clsx";
+import "./globals.css";
 
-import { Providers } from "./providers";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
 
-import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
+const tofino = localFont({
+  src: "../public/fonts/TofinoVariable.woff2",
+  variable: "--font-tofino",
+  display: "swap",
+  weight: "100 800",
+  style: "oblique 0deg 1deg",
+});
 
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/favicon.ico",
-  },
+  metadataBase: new URL("https://evgenii.org"),
+  title: "Evgenii Ostrovskii",
+  description:
+    "Personal website of Evgenii Ostrovskii — software engineer in Porto, Portugal.",
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
+const socials = [
+  { label: "GitHub", href: "https://github.com/JonathanSeriesX" },
+  { label: "X", href: "https://twitter.com/JonathanSeriesX" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/jonathunky" },
+  { label: "YouTube", href: "https://www.youtube.com/@intensifiedhipster" },
+];
 
 export default function RootLayout({
   children,
@@ -33,33 +31,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <head />
-      <body
-        className={clsx(
-          "min-h-screen text-foreground bg-background font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center py-3">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-current"
-                href="https://heroui.com?utm_source=next-app-template"
-                title="heroui.com homepage"
+    <html lang="en" className={tofino.variable}>
+      <body className="flex min-h-dvh flex-col font-sans antialiased">
+        <header className="mx-auto flex w-full max-w-3xl flex-wrap items-baseline justify-between gap-x-6 gap-y-3 px-6 py-8">
+          <span className="font-semibold whitespace-nowrap tracking-tight">
+            Evgenii Ostrovskii
+          </span>
+          <nav className="flex flex-wrap gap-1.5">
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                className="pill"
               >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">HeroUI</p>
-              </Link>
-            </footer>
-          </div>
-        </Providers>
+                {s.label}
+              </a>
+            ))}
+          </nav>
+        </header>
+        <main className="mx-auto w-full max-w-3xl grow px-6">{children}</main>
+        <footer
+          className="mx-auto w-full max-w-3xl px-6 py-8 text-sm"
+          style={{ color: "var(--site-fg-muted)" }}
+        >
+          © {new Date().getFullYear()} Evgenii Ostrovskii · Porto, Portugal
+        </footer>
       </body>
     </html>
   );

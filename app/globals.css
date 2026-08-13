@@ -163,7 +163,7 @@ a {
 
   .section {
     border-top: 1px solid var(--rule);
-    padding-block: 2.5rem;
+    padding-block: 2rem;
   }
 
   .prose-col {
@@ -171,17 +171,6 @@ a {
     display: flex;
     flex-direction: column;
     gap: 1.1em;
-  }
-
-  .entry-no {
-    color: var(--accent);
-    font-family:
-      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-      "Liberation Mono", "Courier New", monospace;
-    font-size: 0.7em;
-    margin-right: 0.9em;
-    position: relative;
-    top: -0.15em;
   }
 
   .entry-name {
@@ -213,7 +202,7 @@ a {
   .tab-bar {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     padding: 4px;
     border-radius: 9999px;
     background: var(--glass);
@@ -223,7 +212,8 @@ a {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.22),
       0 8px 24px rgba(50, 42, 48, 0.08);
-    max-width: 36rem;
+    flex: 1;
+    max-width: 22rem;
   }
 
   .tab-thumb {
@@ -231,7 +221,7 @@ a {
     top: 4px;
     left: 4px;
     height: calc(100% - 8px);
-    width: calc((100% - 8px) / 4);
+    width: calc((100% - 8px) / 3);
     border-radius: 9999px;
     background: var(--thumb);
     box-shadow:
@@ -240,26 +230,23 @@ a {
     transition: transform 0.5s var(--spring);
   }
 
-  .tabs:has(#tab-interests:checked) .tab-thumb {
+  .tabs:has(#tab-projects:checked) .tab-thumb {
     transform: translateX(100%);
   }
   .tabs:has(#tab-work:checked) .tab-thumb {
     transform: translateX(200%);
-  }
-  .tabs:has(#tab-education:checked) .tab-thumb {
-    transform: translateX(300%);
   }
 
   .tab-bar label {
     position: relative;
     z-index: 1;
     text-align: center;
-    padding: 0.45rem 0.4rem;
+    padding: 0.4rem 0.5rem;
     border-radius: 9999px;
     cursor: pointer;
     white-space: nowrap;
     color: var(--muted);
-    font-size: clamp(0.72rem, 2.4vw, 0.92rem);
+    font-size: clamp(0.75rem, 2.4vw, 0.92rem);
     letter-spacing: -0.01em;
     transition: color 0.3s ease;
   }
@@ -268,18 +255,16 @@ a {
     color: var(--ink);
   }
 
+  .tabs:has(#tab-home:checked) label[for="tab-home"],
   .tabs:has(#tab-projects:checked) label[for="tab-projects"],
-  .tabs:has(#tab-interests:checked) label[for="tab-interests"],
-  .tabs:has(#tab-work:checked) label[for="tab-work"],
-  .tabs:has(#tab-education:checked) label[for="tab-education"] {
+  .tabs:has(#tab-work:checked) label[for="tab-work"] {
     color: var(--ink);
     font-weight: 500;
   }
 
-  #tab-projects:focus-visible ~ .tab-bar label[for="tab-projects"],
-  #tab-interests:focus-visible ~ .tab-bar label[for="tab-interests"],
-  #tab-work:focus-visible ~ .tab-bar label[for="tab-work"],
-  #tab-education:focus-visible ~ .tab-bar label[for="tab-education"] {
+  #tab-home:focus-visible ~ * label[for="tab-home"],
+  #tab-projects:focus-visible ~ * label[for="tab-projects"],
+  #tab-work:focus-visible ~ * label[for="tab-work"] {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
@@ -287,7 +272,7 @@ a {
   /* glass panels */
   .tab-panel {
     display: none;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     padding: clamp(1.25rem, 3vw, 2rem);
     border-radius: 28px;
     background: var(--glass);
@@ -297,11 +282,11 @@ a {
     box-shadow: var(--card-shadow);
   }
 
+  .tabs:has(#tab-home:checked) .panel-home,
   .tabs:has(#tab-projects:checked) .panel-projects,
-  .tabs:has(#tab-interests:checked) .panel-interests,
-  .tabs:has(#tab-work:checked) .panel-work,
-  .tabs:has(#tab-education:checked) .panel-education {
+  .tabs:has(#tab-work:checked) .panel-work {
     display: flex;
+    flex-direction: column;
     animation: panel-in 0.5s var(--spring) both;
   }
 
@@ -318,8 +303,75 @@ a {
     }
   }
 
-  /* theme switch (the page's one piece of JS) */
-  .theme-seg {
+  /* ---- experience timeline ---- */
+  .timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8em;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 6rem;
+    top: 0.6em;
+    bottom: 0.6em;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--accent) 45%, transparent),
+      var(--rule) 55%
+    );
+  }
+
+  .timeline-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .timeline-year {
+    color: var(--muted);
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.7em;
+    text-align: right;
+    padding-top: 0.5em;
+    white-space: nowrap;
+  }
+
+  .timeline-entry::before {
+    content: "";
+    position: absolute;
+    left: 6rem;
+    top: 0.45em;
+    width: 9px;
+    height: 9px;
+    transform: translateX(-4px);
+    border-radius: 9999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  .timeline-live::before {
+    animation: pulse 2.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent);
+    }
+  }
+
+  /* glass icon segments — theme switch and social links share the look */
+  .seg {
     display: inline-flex;
     gap: 2px;
     padding: 3px;
@@ -330,7 +382,8 @@ a {
     backdrop-filter: blur(16px) saturate(140%);
   }
 
-  .theme-seg button {
+  .seg button,
+  .seg a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -345,17 +398,19 @@ a {
       box-shadow 0.2s ease;
   }
 
-  .theme-seg button:hover {
+  .seg button:hover,
+  .seg a:hover {
     color: var(--ink);
+    background: color-mix(in srgb, var(--thumb) 55%, transparent);
   }
 
-  .theme-seg button[data-active="true"] {
+  .seg button[data-active="true"] {
     background: var(--thumb);
     color: var(--accent);
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
   }
 
-  .theme-seg svg {
+  .seg svg {
     width: 1rem;
     height: 1rem;
   }
@@ -464,7 +519,8 @@ a {
 
   @media (prefers-reduced-motion: reduce) {
     .cycler-track,
-    .stagger > *,
+    .stagger > :not(.tab-input),
+    .timeline-live::before,
     body::before {
       animation: none !important;
     }

@@ -85,7 +85,7 @@ export function ThemeSwitch() {
   };
 
   return (
-    <div className="theme-seg" role="radiogroup" aria-label="Theme">
+    <div className="seg" role="radiogroup" aria-label="Theme">
       {OPTIONS.map(({ value, label, Icon }) => (
         <button
           key={value}

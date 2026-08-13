@@ -13,23 +13,17 @@ const tabs = [
   { id: "tab-work", label: "experience" },
 ];
 
-const interests = [
-  {
-    name: "Home lab",
-    bio: "Quietly humming hardware running containers, backups, and experiments — forever one component away from perfect.",
-  },
-  {
-    name: "Photography",
-    bio: "Digital photography, mostly with whatever camera is already in my pocket. Lisbon does half the work.",
-  },
-  {
-    name: "Racing & games",
-    bio: "Formula 1 on race weekends, indie video games and competitive Tetris on weeknights.",
-  },
-  {
-    name: "Micro-mobility",
-    bio: "Getting around Lisbon on anything with fewer than four wheels, with strong opinions on urbanism and the right to repair.",
-  },
+const interests: { label: string; hover?: string }[] = [
+  { label: "home lab" },
+  { label: "computer hardware" },
+  { label: "digital photography" },
+  { label: "formula 1", hover: "#CL16" },
+  { label: "competitive tetris" },
+  { label: "indie games" },
+  { label: "micro-mobility" },
+  { label: "urbanism" },
+  { label: "right to repair" },
+  { label: "drum & bass" },
 ];
 
 const projects = [
@@ -105,8 +99,7 @@ export default function Home() {
         <article className="tab-panel panel-home stagger">
           <h1>
             Hi there, my name is Evgenii.
-            <br />
-            I keep things running for{" "}
+            <br />I keep things running for{" "}
             <span className="cycler" aria-label="all sorts of people.">
               <span className="cycler-track" aria-hidden>
                 {[...cycleWords, cycleWords[0]].map((word, i) => (
@@ -117,33 +110,41 @@ export default function Home() {
           </h1>
           <div className="prose-col mt-8 text-muted">
             <p>
-              I&apos;m a site reliability &amp; DevOps engineer in Lisbon,
-              Portugal. I&apos;ve spent the last years keeping trading
-              platforms and banking systems observable, automated, and
-              pleasantly boring — Grafana dashboards, Kubernetes clusters,
-              Ansible playbooks, and the occasional 3 a.m. incident.
-            </p>
-            <p>
-              I like infrastructure that is small, legible, and built to be
-              repaired — the fewer moving parts, the better. This site ships
-              almost no JavaScript: the tabs above are pure CSS, and the only
-              script on the page runs the theme switch.
+              By day, I&apos;m a DevOps engineer keeping{" "}
+              <span className="mono">&lt;something_secret&gt;</span>{" "}
+              observable, automated, and exceeding SLOs.
             </p>
           </div>
-          <ul className="prose-col mt-8 border-t border-rule pt-8">
-            {interests.map((entry) => (
-              <li key={entry.name}>
-                <span className="entry-name">{entry.name}</span>
-                <p className="entry-bio">{entry.bio}</p>
+          <div className="prose-col mt-8 border-t border-rule pt-8 text-muted">
+            <p>By evening, I&apos;m into:</p>
+          </div>
+          <ul className="tag-cloud mt-4">
+            {interests.map((tag) => (
+              <li
+                key={tag.label}
+                className={`tag${tag.hover ? " tag-swap" : ""}`}
+              >
+                {tag.hover ? (
+                  <>
+                    <span className="tag-label">{tag.label}</span>
+                    <span className="tag-hover" aria-hidden>
+                      {tag.hover}
+                    </span>
+                  </>
+                ) : (
+                  tag.label
+                )}
               </li>
             ))}
           </ul>
-          <p className="mono mt-8 text-muted">
-            lisbon, pt · open to relocation
-          </p>
         </article>
 
         <article className="tab-panel panel-projects">
+          <p className="prose-col mb-8 text-muted">
+            By night, I&apos;m building small things I wanted to exist — sharp
+            edges filed off, hosted for pennies, and maintained with more care
+            than they strictly deserve.
+          </p>
           <ul className="prose-col">
             {projects.map((entry) => (
               <li key={entry.name}>
@@ -157,6 +158,9 @@ export default function Home() {
         </article>
 
         <article className="tab-panel panel-work">
+          <p className="mono mb-8 text-muted">
+            currently in Lisbon • open to relocation
+          </p>
           <ol className="timeline">
             {experience.map((entry) => (
               <li

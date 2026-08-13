@@ -245,6 +245,8 @@ a {
     border-radius: 9999px;
     cursor: pointer;
     white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
     color: var(--muted);
     font-size: clamp(0.75rem, 2.4vw, 0.92rem);
     letter-spacing: -0.01em;
@@ -370,6 +372,65 @@ a {
     }
   }
 
+  /* interests tag cloud */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    padding: 0.28rem 0.8rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--accent) 9%, var(--glass));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    color: var(--ink);
+    font-size: 0.9rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .tag:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* tags that swap their text on hover (formula 1 → #CL16, Ferrari red).
+     Both texts share one grid cell so the pill keeps the width of the longer
+     one — no size jump, no cursor flicker at the pill's edge. */
+  .tag-swap {
+    display: inline-grid;
+    text-align: center;
+  }
+
+  .tag-swap .tag-label,
+  .tag-swap .tag-hover {
+    grid-area: 1 / 1;
+    transition: opacity 0.15s ease;
+  }
+
+  .tag-swap .tag-hover {
+    opacity: 0;
+  }
+
+  .tag-swap:hover {
+    background: #dc0000;
+    border-color: #dc0000;
+    color: #fff;
+  }
+
+  .tag-swap:hover .tag-label {
+    opacity: 0;
+  }
+
+  .tag-swap:hover .tag-hover {
+    opacity: 1;
+  }
+
   /* glass icon segments — theme switch and social links share the look */
   .seg {
     display: inline-flex;
@@ -452,12 +513,18 @@ a {
     }
   }
 
-  /* cycling word list in the hero, pure CSS */
+  /* cycling word list in the hero, pure CSS.
+     clip-path instead of overflow:hidden — a scrollable box's baseline is its
+     bottom edge, which never sits exactly on the h1 baseline; clip-path keeps
+     the natural first-word baseline, so the line is pixel-aligned with the
+     surrounding text. */
   .cycler {
     display: inline-flex;
-    overflow: hidden;
+    /* keep the track at its natural 7-row height — stretched to the 1.15em
+       box it would break the percentage-based keyframe steps */
+    align-items: flex-start;
     height: 1.15em;
-    vertical-align: bottom;
+    clip-path: inset(0);
   }
 
   .cycler-track {
@@ -472,6 +539,8 @@ a {
     height: 1.15em;
   }
 
+  /* steps are fractions of the track's real height (7 rows), so every stop
+     lands exactly on a row boundary — em-based steps drift by subpixels. */
   @keyframes cycle {
     0%,
     11% {
@@ -479,27 +548,27 @@ a {
     }
     14.28%,
     25.4% {
-      transform: translateY(-1.15em);
+      transform: translateY(calc(-100% / 7));
     }
     28.57%,
     39.7% {
-      transform: translateY(-2.3em);
+      transform: translateY(calc(-200% / 7));
     }
     42.85%,
     54% {
-      transform: translateY(-3.45em);
+      transform: translateY(calc(-300% / 7));
     }
     57.14%,
     68.3% {
-      transform: translateY(-4.6em);
+      transform: translateY(calc(-400% / 7));
     }
     71.42%,
     82.5% {
-      transform: translateY(-5.75em);
+      transform: translateY(calc(-500% / 7));
     }
     85.71%,
     100% {
-      transform: translateY(-6.9em);
+      transform: translateY(calc(-600% / 7));
     }
   }
 

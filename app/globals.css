@@ -275,8 +275,8 @@ a {
   .tab-panel {
     display: none;
     margin-top: 2rem;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    border-radius: 28px;
+    padding: clamp(1.5rem, 3.2vw, 2.25rem);
+    border-radius: 44px;
     background: var(--glass);
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
@@ -372,6 +372,37 @@ a {
     }
   }
 
+  /* photo placeholder — glassy, cornered, floated so the title and first
+     paragraph wrap around it */
+  .photo-shell {
+    float: right;
+    position: relative;
+    overflow: hidden;
+    width: clamp(7rem, 22vw, 11rem);
+    aspect-ratio: 1;
+    margin: 0 0 1rem 1.5rem;
+    border-radius: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    background:
+      radial-gradient(
+        circle at 30% 20%,
+        rgba(255, 255, 255, 0.45),
+        transparent 70%
+      ),
+      var(--glass);
+    border: 1px solid var(--rule);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    box-shadow:
+      inset 0 1px 12px rgba(15, 18, 28, 0.08),
+      0 8px 24px rgba(50, 42, 48, 0.1);
+  }
+
   /* interests tag cloud */
   .tag-cloud {
     display: flex;
@@ -388,15 +419,23 @@ a {
     font-size: 0.9rem;
     letter-spacing: -0.01em;
     white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 14%, transparent);
     transition:
       color 0.2s ease,
       border-color 0.2s ease,
-      background-color 0.2s ease;
+      background-color 0.2s ease,
+      transform 0.25s var(--spring),
+      box-shadow 0.25s ease;
   }
 
+  /* scale is paint-only, so the cloud's layout never shifts */
   .tag:hover {
     color: var(--accent);
     border-color: var(--accent);
+    transform: scale(1.07);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 32%, transparent);
   }
 
   /* tags that swap their text on hover (formula 1 → #CL16, Ferrari red).
@@ -421,6 +460,7 @@ a {
     background: #dc0000;
     border-color: #dc0000;
     color: #fff;
+    box-shadow: 0 6px 18px rgba(220, 0, 0, 0.38);
   }
 
   .tag-swap:hover .tag-label {
@@ -527,11 +567,12 @@ a {
     clip-path: inset(0);
   }
 
+  /* @keyframes cycle is generated in page.tsx from the word list */
   .cycler-track {
     display: flex;
     flex-direction: column;
     color: var(--accent);
-    animation: cycle 14s var(--spring) infinite;
+    animation: cycle var(--cycle-duration, 12s) var(--spring) infinite;
   }
 
   .cycler-track > span {
@@ -539,38 +580,6 @@ a {
     height: 1.15em;
   }
 
-  /* steps are fractions of the track's real height (7 rows), so every stop
-     lands exactly on a row boundary — em-based steps drift by subpixels. */
-  @keyframes cycle {
-    0%,
-    11% {
-      transform: translateY(0);
-    }
-    14.28%,
-    25.4% {
-      transform: translateY(calc(-100% / 7));
-    }
-    28.57%,
-    39.7% {
-      transform: translateY(calc(-200% / 7));
-    }
-    42.85%,
-    54% {
-      transform: translateY(calc(-300% / 7));
-    }
-    57.14%,
-    68.3% {
-      transform: translateY(calc(-400% / 7));
-    }
-    71.42%,
-    82.5% {
-      transform: translateY(calc(-500% / 7));
-    }
-    85.71%,
-    100% {
-      transform: translateY(calc(-600% / 7));
-    }
-  }
 
   /* grain overlay */
   .grain {

@@ -1,16 +1,34 @@
+import Image from "next/image";
+
 const cycleWords = [
   "all sorts of people.",
   "big banks.",
   "trading floors.",
   "Apple collectors.",
-  "tweet archivists.",
-  "something secret.",
+  "Day One users.",
 ];
+
+// The roll keyframes are generated from cycleWords, so the animation always
+// matches the row count — edit the list freely. Track = words + a duplicate
+// of the first, so the loop restart is seamless.
+const cycleRows = cycleWords.length + 1;
+const cycleSlot = 100 / cycleWords.length;
+const cycleKeyframes = `@keyframes cycle {
+${cycleWords
+  .map((_, i) => {
+    const from = (i * cycleSlot).toFixed(2);
+    const to = ((i + 1) * cycleSlot - 3).toFixed(2);
+    return `  ${from}%, ${to}% { transform: translateY(calc(-100% * ${i} / ${cycleRows})); }`;
+  })
+  .join("\n")}
+  100% { transform: translateY(calc(-100% * ${cycleWords.length} / ${cycleRows})); }
+}`;
+const cycleDuration = `${(cycleWords.length * 2.4).toFixed(1)}s`;
 
 const tabs = [
   { id: "tab-home", label: "home" },
   { id: "tab-projects", label: "projects" },
-  { id: "tab-work", label: "experience" },
+  { id: "tab-work", label: "career" },
 ];
 
 const interests: { label: string; hover?: string }[] = [
@@ -97,25 +115,42 @@ export default function Home() {
 
       <main className="mx-auto w-full max-w-3xl grow px-6 pb-4">
         <article className="tab-panel panel-home stagger">
-          <h1>
-            Hi there, my name is Evgenii.
-            <br />I keep things running for{" "}
-            <span className="cycler" aria-label="all sorts of people.">
-              <span className="cycler-track" aria-hidden>
-                {[...cycleWords, cycleWords[0]].map((word, i) => (
-                  <span key={i}>{word}</span>
-                ))}
+          <div className="flow-root">
+            <div className="photo-shell">
+              <Image
+                src="/me.jpg"
+                alt="Evgenii"
+                fill
+                sizes="176px"
+                priority
+                className="object-cover"
+              />
+            </div>
+            <h1>
+              Hi there, my name is Evgenii.
+              <br />I build stuff for{" "}
+              <span className="cycler" aria-label="all sorts of people.">
+                <style>{cycleKeyframes}</style>
+                <span
+                  className="cycler-track"
+                  aria-hidden
+                  style={
+                    { "--cycle-duration": cycleDuration } as React.CSSProperties
+                  }
+                >
+                  {[...cycleWords, cycleWords[0]].map((word, i) => (
+                    <span key={i}>{word}</span>
+                  ))}
+                </span>
               </span>
-            </span>
-          </h1>
-          <div className="prose-col mt-8 text-muted">
-            <p>
+            </h1>
+            <p className="mt-6 text-muted">
               By day, I&apos;m a DevOps engineer keeping{" "}
-              <span className="mono">&lt;something_secret&gt;</span>{" "}
-              observable, automated, and exceeding SLOs.
+              <span className="mono">&lt;something_secret&gt;</span> observable,
+              automated, and exceeding SLOs.
             </p>
           </div>
-          <div className="prose-col mt-8 border-t border-rule pt-8 text-muted">
+          <div className="mt-6 border-t border-rule pt-6 text-muted">
             <p>By evening, I&apos;m into:</p>
           </div>
           <ul className="tag-cloud mt-4">
@@ -141,9 +176,8 @@ export default function Home() {
 
         <article className="tab-panel panel-projects">
           <p className="prose-col mb-8 text-muted">
-            By night, I&apos;m building small things I wanted to exist — sharp
-            edges filed off, hosted for pennies, and maintained with more care
-            than they strictly deserve.
+            By night, I&apos;m fixing small gaps in this world one by one, and
+            probably with more care than they deserve.
           </p>
           <ul className="prose-col">
             {projects.map((entry) => (

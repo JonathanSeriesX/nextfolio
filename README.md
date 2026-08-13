@@ -1,10 +1,10 @@
-# evgenii.org
+# Liquid Folio
 
-Personal website of Evgenii Ostrovskii.
-
-Next.js + Tailwind CSS, nothing else. Design inspired by [Alpine](https://alpine.nuxt.space).
+My personal website. Next.js + Tailwind CSS, nothing else.
 
 ```sh
 pnpm install
 pnpm dev
 ```
+
+(why would you tho? just go visit [evgenii.org](https://evgenii.org))

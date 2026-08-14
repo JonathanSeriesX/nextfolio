@@ -44,12 +44,31 @@ const interests: { label: string; hover?: string }[] = [
   { label: "drum & bass" },
 ];
 
+/* external-link arrow, same glyph as everycase's LinkArrowIcon */
+function LinkArrowIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="link-arrow"
+      aria-hidden
+    >
+      <path d="M7 17 17 7M9 7h8v8" />
+    </svg>
+  );
+}
+
 type ProjectIcon = { src: string } | { emoji: string };
 
 interface Project {
   name: string;
   href: string;
-  linkLabel: string;
   icon: ProjectIcon;
   year: string;
   accent: string;
@@ -61,7 +80,6 @@ const projects: Project[] = [
   {
     name: "Finest Woven",
     href: "https://everycase.org",
-    linkLabel: "visit website",
     icon: { src: "/icons/everycase.png" },
     year: "2023 — today",
     accent: "",
@@ -71,7 +89,6 @@ const projects: Project[] = [
   {
     name: "Twixodus",
     href: "https://github.com/JonathanSeriesX/dayoneXtwitter",
-    linkLabel: "view on github",
     icon: { emoji: "🕊️" },
     year: "2025 — today",
     accent: "accent-dayone",
@@ -274,17 +291,14 @@ export default async function Home() {
                     )}
                   </span>
                   <span className="project-title">
-                    <span className="entry-name">{entry.name}</span>
-                    <span className="dot" aria-hidden>
-                      •
-                    </span>
                     <a
                       href={entry.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="link project-visit"
+                      className="entry-name project-name-link"
                     >
-                      {entry.linkLabel}
+                      {entry.name}
+                      <LinkArrowIcon />
                     </a>
                   </span>
                   <span className="project-year">{entry.year}</span>
@@ -314,7 +328,7 @@ export default async function Home() {
                   <span className="project-title">
                     <span className="entry-name">{entry.name}</span>
                   </span>
-                  <span className="project-year">reserved</span>
+                  <span className="project-year">soon</span>
                 </div>
                 <p className="entry-bio">{entry.bio}</p>
               </div>

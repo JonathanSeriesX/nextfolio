@@ -96,18 +96,18 @@ const socials = [
     href: "https://github.com/JonathanSeriesX",
     Icon: GitHubIcon,
   },
-  { label: "X", href: "https://twitter.com/JonathanSeriesX", Icon: XIcon },
+  //{ label: "X", href: "https://twitter.com/JonathanSeriesX", Icon: XIcon },
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/in/jonathunky",
+    href: "https://linkedin.com/in/jonathanseriesx",
     Icon: LinkedInIcon,
   },
-  {
+  /*{
     label: "YouTube",
     href: "https://www.youtube.com/@intensifiedhipster",
     Icon: YouTubeIcon,
-  },
-  { label: "Email", href: "mailto:cv@evgenii.org", Icon: MailIcon },
+  },*/
+  { label: "Email", href: "mailto:me@evgenii.org", Icon: MailIcon },
 ];
 
 export default function RootLayout({
@@ -146,6 +146,12 @@ export default function RootLayout({
               <ThemeSwitch />
             </div>
           </footer>
+          {/* Cloudflare Web Analytics — classic defer variant, as on everycase */}
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "55f1610bc9e9425dae4d2b3d17794efd"}'
+          />
         </ThemeProvider>
       </body>
     </html>

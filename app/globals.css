@@ -19,17 +19,18 @@
     0 2px 10px rgba(50, 42, 48, 0.06);
   --spring: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --text-body: min(calc(0.3 * 1.2vw + 1rem), 1.54rem);
-  --text-h1: max(
-    calc(var(--text-body) * 1.4),
-    min(calc(1.25 * 1.2vw + 0.5rem), 2.75rem)
-  );
+  /* Fluid below ~816px (where the 48rem column + padding stops growing),
+     constant above — the cap is reached exactly at the point the column
+     freezes, so resizing a desktop window never reflows the text. */
+  --text-body: min(calc(0.5637vw + 1rem), 1.2875rem);
+  --text-h1: calc(var(--text-body) * 1.4);
 
   /* Static on purpose (ported from everycase): iOS 26 re-adapts its glass
      chrome whenever color-scheme CHANGES at runtime. Declared once, there
      is nothing to re-adapt when the site theme toggles. */
   color-scheme: light dark;
 }
+
 
 html.dark {
   --paper: #131110;
@@ -117,10 +118,14 @@ h1 {
   font-weight: 500;
 }
 
-a {
-  color: inherit;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
+/* layered so component styles (.project-visit, .link:hover) can override:
+   un-layered rules would beat everything inside @layer components */
+@layer base {
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
 }
 
 ::selection {
@@ -475,6 +480,7 @@ a {
 
   /* ---- project cards ---- */
   .project-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
@@ -497,6 +503,18 @@ a {
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     box-shadow: 0 16px 36px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  /* The lift moves the card off a pointer resting at its bottom edge, which
+     un-hovers it, drops it back onto the pointer, and loops. Extend the hit
+     area below by the travel distance while lifted so the pointer stays in. */
+  .project-card:not(.reserved):hover::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 4px;
   }
 
   .project-card.reserved {
@@ -530,13 +548,27 @@ a {
     gap: 0.55em;
   }
 
-  .project-title .dot {
-    color: var(--muted);
+  /* project titles are the links; preflight makes svg display:block, so the
+     arrow needs inline-block or it wraps onto its own line */
+  .link-arrow {
+    display: inline-block;
+    vertical-align: -0.08em;
   }
 
-  .project-visit {
-    font-size: 0.82em;
+  .project-name-link {
+    text-decoration: none;
     white-space: nowrap;
+  }
+
+  .project-name-link .link-arrow {
+    font-size: 0.85em;
+    margin-left: 0.25em;
+  }
+
+  .project-name-link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
   }
 
   /* the raw ★ glyph sits below the mono line's optical centre */
@@ -586,6 +618,9 @@ a {
   }
 
   .stat-strip {
+    /* the bio's line-leading pads the flex gap above; pull back so the
+       visual gap matches the crisp pill edge below (measured ~2.5px) */
+    margin-top: -0.16rem;
     color: var(--accent);
     font-family:
       ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,

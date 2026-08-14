@@ -14,6 +14,15 @@
   --glow-b: #f5a62345;
   --glass: rgba(252, 250, 246, 0.55);
   --thumb: rgba(255, 255, 255, 0.92);
+
+  /* named accent palette — the accent-* classes and the career-lane
+     gradients both read these, so a row can reference its neighbour's
+     colour (var(--c-*) via inline --xp-from/--xp-to) */
+  --c-crimson: #e3504f;
+  --c-dayone: #2193e6;
+  --c-amber: #c07a10;
+  --c-violet: #7a58d0;
+  --c-emerald: #109467;
   --card-shadow:
     0 24px 48px rgba(50, 42, 48, 0.13),
     0 2px 10px rgba(50, 42, 48, 0.06);
@@ -57,6 +66,15 @@ html.black {
   --glass: rgba(24, 21, 20, 0.55);
   --thumb: rgba(52, 47, 44, 0.95);
   --card-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
+}
+
+/* dark-mode accent palette, shared by dark and pitch black */
+html:is(.dark, .black) {
+  --c-crimson: #ff4d4d;
+  --c-dayone: #4fc3ff;
+  --c-amber: #f5a623;
+  --c-violet: #a78bfa;
+  --c-emerald: #34d399;
 }
 
 @theme inline {
@@ -347,7 +365,8 @@ h1 {
     flex-direction: column;
     margin-left: 2.1rem;
     padding: 0.95rem 1.2rem 1.05rem;
-    border-radius: 22px;
+    /* same radius as .project-card */
+    border-radius: 28px;
     background: var(--glass);
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
@@ -359,20 +378,27 @@ h1 {
       box-shadow 0.3s ease;
   }
 
+  /* no hover lift: the rail and dot are anchored to the card, and the
+     timeline must never move under the pointer */
   .xp-card:hover {
-    transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 16%, transparent);
   }
 
   /* the card's slice of the line, faintly tinted by its accent; bleeds up
      through the row padding so consecutive slices connect (phone rail) */
+  /* Rail offsets are corrected by the card's 1px border everywhere: the
+     pseudos are positioned against the padding box, which sits 1px inside
+     the border box the margins are measured from. Without the correction
+     every rail is 1px off the crossings drawn on the row itself. */
   .xp-card::before {
     content: "";
     position: absolute;
-    left: calc(var(--rail-gap) * -1);
-    top: -1rem;
-    bottom: 0;
+    left: calc(var(--rail-gap) * -1 - 1px);
+    /* bleed up through the row padding to the exact row boundary — the
+       extra -1px compensates the card border, as everywhere else */
+    top: calc(-1rem - 1px);
+    bottom: -1px;
     width: 2px;
     background: color-mix(in srgb, var(--accent) 30%, var(--rule));
   }
@@ -382,7 +408,8 @@ h1 {
   }
 
   .xp-gap + .xp-row .xp-card::before {
-    top: 0;
+    /* start exactly at the row boundary where the gap's arc ends */
+    top: -1px;
   }
 
   .xp-row:last-child .xp-card::before {
@@ -393,7 +420,7 @@ h1 {
   .xp-card::after {
     content: "";
     position: absolute;
-    left: calc(var(--rail-gap) * -1);
+    left: calc(var(--rail-gap) * -1 - 1px);
     top: var(--dot-y);
     width: 11px;
     height: 11px;
@@ -473,7 +500,9 @@ h1 {
     }
 
     .xp-card::before {
-      top: 0;
+      /* -1px again: bridge the card's border-width so the rail meets the
+         crossing with no pinhole */
+      top: -1px;
     }
 
     .xp-row:first-child .xp-card::before {
@@ -482,7 +511,7 @@ h1 {
 
     /* cards hug the wall opposite their lane; the rail-side margin equals
        --rail-gap, which puts the rail exactly on the row edge where the
-       crossing elbows terminate */
+       crossing paths terminate */
     .xp-left .xp-card {
       margin-left: var(--rail-gap);
       margin-right: 0;
@@ -493,10 +522,21 @@ h1 {
       margin-right: var(--rail-gap);
     }
 
+    /* mirror of the base offset: 100% is the padding-box width (2px of
+       border short of the margin box), so +1px per border side lands the
+       rail on [row-width - 2px, row-width] — exactly the elbows'
+       border-right band */
     .xp-right .xp-card::before,
     .xp-right .xp-card::after {
-      left: calc(100% + var(--rail-gap));
+      left: calc(100% + var(--rail-gap) - 1px);
     }
+
+    /* Crossing into this row, in three pieces so the colour can travel:
+       a departure arc wearing the PREVIOUS card's colour (--xp-from, set
+       inline per row), a straight gradient run blending into this card's
+       colour, and an arrival arc in this card's colour. The arcs are full
+       quarter-circles (radius = segment height); nothing overlaps, so the
+       translucent strokes never stack darker. */
 
     .xp-right::before,
     .xp-right::after,
@@ -506,26 +546,28 @@ h1 {
       position: absolute;
     }
 
-    /* crossing that lands on a RIGHT row: down the left rail, arc right —
-       each elbow is a full quarter-arc (radius = its segment height) */
+    /* landing on a RIGHT row: departure arc off the left rail… */
     .xp-right::before {
       top: 0;
       left: 0;
-      width: 55%;
+      width: var(--cross-turn);
       height: var(--cross-turn);
-      border-left: 2px solid var(--rule);
-      border-bottom: 2px solid var(--rule);
+      border-left: 2px solid
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule));
+      border-bottom: 2px solid
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule));
       border-bottom-left-radius: var(--cross-turn);
     }
 
-    /* …across the lane, arc down onto this row's right rail */
+    /* …arrival arc onto this row's right rail */
     .xp-right::after {
       top: calc(var(--cross-turn) - 2px);
-      left: 45%;
       right: 0;
+      width: calc(var(--cross-h) - var(--cross-turn));
       height: calc(var(--cross-h) - var(--cross-turn) + 2px);
-      border-right: 2px solid var(--rule);
-      border-top: 2px solid var(--rule);
+      border-right: 2px solid
+        color-mix(in srgb, var(--accent) 30%, var(--rule));
+      border-top: 2px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
       border-top-right-radius: calc(var(--cross-h) - var(--cross-turn));
     }
 
@@ -533,21 +575,49 @@ h1 {
     .xp-left::before {
       top: 0;
       right: 0;
-      width: 55%;
+      width: var(--cross-turn);
       height: var(--cross-turn);
-      border-right: 2px solid var(--rule);
-      border-bottom: 2px solid var(--rule);
+      border-right: 2px solid
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule));
+      border-bottom: 2px solid
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule));
       border-bottom-right-radius: var(--cross-turn);
     }
 
     .xp-left::after {
       top: calc(var(--cross-turn) - 2px);
-      right: 45%;
       left: 0;
+      width: calc(var(--cross-h) - var(--cross-turn));
       height: calc(var(--cross-h) - var(--cross-turn) + 2px);
-      border-left: 2px solid var(--rule);
-      border-top: 2px solid var(--rule);
+      border-left: 2px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
+      border-top: 2px solid color-mix(in srgb, var(--accent) 30%, var(--rule));
       border-top-left-radius: calc(var(--cross-h) - var(--cross-turn));
+    }
+
+    /* the straight run between the arcs: a background strip on the row,
+       fading from the previous card's colour into this one's */
+    .xp-row {
+      background-repeat: no-repeat;
+      background-size: calc(100% - var(--cross-h)) 2px;
+    }
+
+    .xp-row.xp-right {
+      background-image: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule)),
+        color-mix(in srgb, var(--accent) 30%, var(--rule))
+      );
+      background-position: var(--cross-turn) calc(var(--cross-turn) - 2px);
+    }
+
+    .xp-row.xp-left {
+      background-image: linear-gradient(
+        to left,
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule)),
+        color-mix(in srgb, var(--accent) 30%, var(--rule))
+      );
+      background-position: calc(var(--cross-h) - var(--cross-turn))
+        calc(var(--cross-turn) - 2px);
     }
 
     /* nothing crosses into the first row, or into the row after a gap
@@ -559,42 +629,67 @@ h1 {
       content: none;
     }
 
-    /* a gap IS a crossing, just taller and dashed — the “- - - -” lane */
+    .xp-row:first-child,
+    .xp-gap + .xp-row {
+      background-image: none;
+    }
+
+    /* a gap IS a crossing, just taller and dashed — the “- - - -” lane.
+       Its arcs keep the neighbouring cards' colours; the horizontal run
+       fades colour → grey → colour (two transitions, per the CV silence). */
     .xp-gap {
-      --cross-h: 5rem;
-      --cross-turn: 3rem;
+      --cross-h: 4.5rem;
+      --cross-turn: 2.25rem;
       height: var(--cross-h);
     }
 
-    .xp-gap::before,
+    /* arcs stay solid — only the horizontal .xp-lane run is dashed */
     .xp-gap::after {
-      border-style: dashed;
-      border-width: 0;
-      border-color: color-mix(in srgb, var(--muted) 55%, transparent);
-      /* keep the dashed arcs as round as the solid ones, not 3rem */
-      border-bottom-left-radius: 2rem;
-      border-bottom-right-radius: 2rem;
-    }
-
-    .xp-gap.xp-right::before {
-      border-left-width: 2px;
-      border-bottom-width: 2px;
-    }
-
-    .xp-gap.xp-right::after {
-      border-right-width: 2px;
-      border-top-width: 2px;
+      border-color: color-mix(in srgb, var(--xp-to, var(--rule)) 30%, var(--rule));
     }
 
     .xp-gap.xp-left::before {
+      /* undo the phone stub's left offset */
       left: auto;
-      border-right-width: 2px;
-      border-bottom-width: 2px;
     }
 
-    .xp-gap.xp-left::after {
-      border-left-width: 2px;
-      border-top-width: 2px;
+    .xp-lane {
+      display: block;
+      position: absolute;
+      top: calc(var(--cross-turn) - 2px);
+      height: 2px;
+      background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule)),
+        color-mix(in srgb, var(--muted) 55%, transparent) 32% 68%,
+        color-mix(in srgb, var(--xp-to, var(--rule)) 30%, var(--rule))
+      );
+      -webkit-mask-image: repeating-linear-gradient(
+        to right,
+        #000 0 7px,
+        transparent 7px 16px
+      );
+      mask-image: repeating-linear-gradient(
+        to right,
+        #000 0 7px,
+        transparent 7px 16px
+      );
+    }
+
+    .xp-gap.xp-right .xp-lane {
+      left: var(--cross-turn);
+      right: calc(var(--cross-h) - var(--cross-turn));
+    }
+
+    .xp-gap.xp-left .xp-lane {
+      left: calc(var(--cross-h) - var(--cross-turn));
+      right: var(--cross-turn);
+      background: linear-gradient(
+        to left,
+        color-mix(in srgb, var(--xp-from, var(--rule)) 30%, var(--rule)),
+        color-mix(in srgb, var(--muted) 55%, transparent) 32% 68%,
+        color-mix(in srgb, var(--xp-to, var(--rule)) 30%, var(--rule))
+      );
     }
   }
 
@@ -863,29 +958,16 @@ h1 {
   /* per-project accents: everything inside a card that reads --accent
      (stat strip, pills, hover states) tints automatically */
   .accent-dayone {
-    --accent: #2193e6;
+    --accent: var(--c-dayone);
   }
   .accent-amber {
-    --accent: #c07a10;
+    --accent: var(--c-amber);
   }
   .accent-violet {
-    --accent: #7a58d0;
+    --accent: var(--c-violet);
   }
   .accent-emerald {
-    --accent: #109467;
-  }
-
-  html:is(.dark, .black) .accent-dayone {
-    --accent: #4fc3ff;
-  }
-  html:is(.dark, .black) .accent-amber {
-    --accent: #f5a623;
-  }
-  html:is(.dark, .black) .accent-violet {
-    --accent: #a78bfa;
-  }
-  html:is(.dark, .black) .accent-emerald {
-    --accent: #34d399;
+    --accent: var(--c-emerald);
   }
 
   /* glass icon segments — theme switch and social links share the look */
@@ -1014,9 +1096,13 @@ h1 {
       border-radius: 32px;
     }
 
+    .project-card,
+    .xp-card {
+      border-radius: 22px;
+    }
+
     .project-card {
       padding: 1rem 1.1rem;
-      border-radius: 22px;
     }
 
     /* let the year drop below the icon+title instead of crushing the title:

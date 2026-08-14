@@ -82,16 +82,8 @@ interface Project {
   bio: string;
 }
 
+// newest first
 const projects: Project[] = [
-  {
-    name: "Finest Woven",
-    href: "https://everycase.org",
-    icon: { src: "/icons/everycase.png" },
-    year: "2023 — today",
-    accent: "",
-    pills: ["next.js", "mongodb", "data scraping"],
-    bio: "The one and only database of accessories made by Apple. Ultra-fast and non-intrusive, as every website should be.",
-  },
   {
     name: "Twixodus",
     href: "https://github.com/JonathanSeriesX/dayoneXtwitter",
@@ -100,6 +92,15 @@ const projects: Project[] = [
     accent: "accent-dayone",
     pills: ["swift", "local llms"],
     bio: "A Swift app that migrates your Twitter archive into Day One journal, and does it really well.",
+  },
+  {
+    name: "Finest Woven",
+    href: "https://everycase.org",
+    icon: { src: "/icons/everycase.png" },
+    year: "2023 — today",
+    accent: "",
+    pills: ["next.js", "mongodb", "data scraping"],
+    bio: "The one and only database of accessories made by Apple. Ultra-fast and non-intrusive, as every website should be.",
   },
 ];
 
@@ -158,6 +159,15 @@ interface ExperienceEntry {
   bio: string;
   pills?: string[];
 }
+
+// palette variables for the career lane's colour gradients — each row hands
+// its predecessor's colour to CSS as --xp-from (and gaps --xp-to as well)
+const accentVar: Record<string, string> = {
+  "accent-dayone": "var(--c-dayone)",
+  "accent-amber": "var(--c-amber)",
+  "accent-violet": "var(--c-violet)",
+  "accent-emerald": "var(--c-emerald)",
+};
 
 // `{ gap: true }` rows render as a dashed stretch of the timeline lane — CV
 // silence made explicit. Card sides alternate over the cards only, so a gap
@@ -370,20 +380,44 @@ export default async function Home() {
             currently in Lisbon • open to relocation
           </p>
           <ol className="xp-zigzag">
-            {experience.map((entry, i) =>
-              "gap" in entry ? (
-                // direction class = the upcoming card's side, so the dashed
-                // crossing lands where that card's rail begins
-                <li
-                  key={`gap-${i}`}
-                  className={`xp-gap ${zigzagSide % 2 ? "xp-right" : "xp-left"}`}
-                  aria-hidden
-                />
-              ) : (
-                <li
-                  key={entry.name}
-                  className={`xp-row ${zigzagSide++ % 2 ? "xp-right" : "xp-left"}${entry.live ? " xp-live" : ""} ${entry.accent ?? ""}`}
-                >
+            {(() => {
+              // colour of an entry's lane segment, for the crossing gradients
+              const xpColor = (e?: (typeof experience)[number]) =>
+                e && !("gap" in e) && e.accent
+                  ? accentVar[e.accent]
+                  : "var(--c-crimson)";
+              return experience.map((entry, i) => {
+                if ("gap" in entry) {
+                  // direction = the upcoming card's side, so the dashed
+                  // crossing lands where that card's rail begins
+                  const toRight = zigzagSide % 2 === 1;
+                  return (
+                    <li
+                      key={`gap-${i}`}
+                      className={`xp-gap ${toRight ? "xp-right" : "xp-left"}`}
+                      aria-hidden
+                      style={
+                        {
+                          "--xp-from": xpColor(experience[i - 1]),
+                          "--xp-to": xpColor(experience[i + 1]),
+                        } as React.CSSProperties
+                      }
+                    >
+                      <span className="xp-lane" />
+                    </li>
+                  );
+                }
+                const side = zigzagSide++ % 2 ? "xp-right" : "xp-left";
+                return (
+                  <li
+                    key={entry.name}
+                    className={`xp-row ${side}${entry.live ? " xp-live" : ""} ${entry.accent ?? ""}`}
+                    style={
+                      {
+                        "--xp-from": xpColor(experience[i - 1]),
+                      } as React.CSSProperties
+                    }
+                  >
                   <div className="xp-card">
                     <div className="xp-head">
                       <span className="entry-name">{entry.name}</span>
@@ -402,8 +436,9 @@ export default async function Home() {
                     )}
                   </div>
                 </li>
-              ),
-            )}
+                );
+              });
+            })()}
           </ol>
         </article>
       </main>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The site's own motif: a segmented control with its thumb parked left.
+       Kept to three shapes so it survives being drawn at 16px. Colours are
+       the light-theme accent and paper from globals.css. -->
+  <rect width="64" height="64" rx="15" fill="#e3504f" />
+  <rect x="9" y="25" width="46" height="14" rx="7" fill="#f7f4ef" opacity=".32" />
+  <rect x="9" y="25" width="23" height="14" rx="7" fill="#f7f4ef" />
+</svg>

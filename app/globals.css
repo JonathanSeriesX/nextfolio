@@ -284,24 +284,26 @@ a {
     box-shadow: var(--card-shadow);
   }
 
+  /* Entrance via @starting-style transitions, not keyframes: animations on
+     display:none → flex re-renders replay unreliably in Chromium, while
+     @starting-style is specified to fire on every "becomes rendered". */
   .tabs:has(#tab-home:checked) .panel-home,
   .tabs:has(#tab-projects:checked) .panel-projects,
   .tabs:has(#tab-work:checked) .panel-work {
     display: flex;
     flex-direction: column;
-    animation: panel-in 0.5s var(--spring) both;
-  }
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition:
+      opacity 0.5s var(--spring),
+      transform 0.5s var(--spring),
+      filter 0.5s ease;
 
-  @keyframes panel-in {
-    from {
+    @starting-style {
       opacity: 0;
       transform: translateY(12px);
       filter: blur(3px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
     }
   }
 
@@ -316,7 +318,7 @@ a {
   .timeline::before {
     content: "";
     position: absolute;
-    left: 6rem;
+    left: 7.5rem;
     top: 0.6em;
     bottom: 0.6em;
     width: 1px;
@@ -330,7 +332,7 @@ a {
   .timeline-entry {
     position: relative;
     display: grid;
-    grid-template-columns: 5rem minmax(0, 1fr);
+    grid-template-columns: 6.5rem minmax(0, 1fr);
     gap: 2rem;
   }
 
@@ -348,7 +350,7 @@ a {
   .timeline-entry::before {
     content: "";
     position: absolute;
-    left: 6rem;
+    left: 7.5rem;
     top: 0.45em;
     width: 9px;
     height: 9px;
@@ -471,6 +473,149 @@ a {
     opacity: 1;
   }
 
+  /* ---- project cards ---- */
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    border-radius: 28px;
+    padding: 1.25rem 1.5rem;
+    background: var(--glass);
+    border: 1px solid var(--rule);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    box-shadow: 0 8px 24px rgba(50, 42, 48, 0.08);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform 0.3s var(--spring),
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .project-card:not(.reserved):hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .project-card.reserved {
+    border-style: dashed;
+    box-shadow: none;
+    background: color-mix(in srgb, var(--glass) 55%, transparent);
+  }
+
+  .project-head {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .project-card .entry-name {
+    color: var(--accent);
+  }
+
+  .project-card .entry-bio {
+    margin-top: 0;
+  }
+
+  /* flex-centered, not baseline-aligned: the smaller link and the bullet
+     optically centre against the title instead of hanging off its baseline */
+  .project-title {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55em;
+  }
+
+  .project-title .dot {
+    color: var(--muted);
+  }
+
+  .project-visit {
+    font-size: 0.82em;
+    white-space: nowrap;
+  }
+
+  /* the raw ★ glyph sits below the mono line's optical centre */
+  .stat-strip .star {
+    display: inline-block;
+    vertical-align: 0.09em;
+    font-size: 0.95em;
+  }
+
+  /* mini image shell for project icons — the photo-shell look, espresso size */
+  .project-icon {
+    position: relative;
+    overflow: hidden;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    background:
+      radial-gradient(
+        circle at 30% 20%,
+        rgba(255, 255, 255, 0.5),
+        transparent 70%
+      ),
+      var(--glass);
+    border: 1px solid var(--rule);
+    box-shadow: inset 0 1px 8px rgba(15, 18, 28, 0.08);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .project-icon img {
+    object-fit: contain;
+    padding: 5px;
+  }
+
+  .project-year {
+    color: var(--muted);
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.7em;
+    white-space: nowrap;
+  }
+
+  .stat-strip {
+    color: var(--accent);
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.72em;
+    letter-spacing: 0;
+  }
+
+  /* per-project accents: everything inside a card that reads --accent
+     (stat strip, pills, hover states) tints automatically */
+  .accent-dayone {
+    --accent: #2193e6;
+  }
+  .accent-amber {
+    --accent: #c07a10;
+  }
+  .accent-violet {
+    --accent: #7a58d0;
+  }
+
+  html:is(.dark, .black) .accent-dayone {
+    --accent: #4fc3ff;
+  }
+  html:is(.dark, .black) .accent-amber {
+    --accent: #f5a623;
+  }
+  html:is(.dark, .black) .accent-violet {
+    --accent: #a78bfa;
+  }
+
   /* glass icon segments — theme switch and social links share the look */
   .seg {
     display: inline-flex;
@@ -516,41 +661,41 @@ a {
     height: 1rem;
   }
 
-  /* entrance stagger, superlogical style */
+  /* entrance stagger, superlogical style — @starting-style so it replays on
+     every tab visit, same rationale as the panels */
   .stagger > :not(.tab-input) {
-    animation: rise 0.6s var(--spring) both;
-  }
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition:
+      opacity 0.6s var(--spring),
+      transform 0.6s var(--spring),
+      filter 0.6s ease;
 
-  .stagger > :nth-child(1) {
-    animation-delay: 40ms;
-  }
-  .stagger > :nth-child(2) {
-    animation-delay: 120ms;
-  }
-  .stagger > :nth-child(3) {
-    animation-delay: 200ms;
-  }
-  .stagger > :nth-child(4) {
-    animation-delay: 280ms;
-  }
-  .stagger > :nth-child(5) {
-    animation-delay: 360ms;
-  }
-  .stagger > :nth-child(6) {
-    animation-delay: 440ms;
-  }
-
-  @keyframes rise {
-    from {
+    @starting-style {
       opacity: 0;
       transform: translateY(12px);
       filter: blur(3px);
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
+  }
+
+  .stagger > :nth-child(1) {
+    transition-delay: 40ms;
+  }
+  .stagger > :nth-child(2) {
+    transition-delay: 120ms;
+  }
+  .stagger > :nth-child(3) {
+    transition-delay: 200ms;
+  }
+  .stagger > :nth-child(4) {
+    transition-delay: 280ms;
+  }
+  .stagger > :nth-child(5) {
+    transition-delay: 360ms;
+  }
+  .stagger > :nth-child(6) {
+    transition-delay: 440ms;
   }
 
   /* cycling word list in the hero, pure CSS.
@@ -597,16 +742,14 @@ a {
 
   @media (prefers-reduced-motion: reduce) {
     .cycler-track,
-    .stagger > :not(.tab-input),
     .timeline-live::before,
     body::before {
       animation: none !important;
     }
-    .tab-thumb {
-      transition: none;
-    }
-    .tabs:has(input:checked) .tab-panel {
-      animation: none;
+    .tab-thumb,
+    .tab-panel,
+    .stagger > :not(.tab-input) {
+      transition: none !important;
     }
   }
 }

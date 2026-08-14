@@ -9,8 +9,8 @@
    =========================================================================== */
 
 import type { ReactNode } from "react";
-// import { Montserrat } from "next/font/google";
-import localFont from "next/font/local";
+import { Montserrat } from "next/font/google";
+// import localFont from "next/font/local";
 
 import {
   GitHubIcon,
@@ -23,43 +23,46 @@ import { countCsvRows, githubStars } from "@/app/stats";
 
 /* --- typeface -------------------------------------------------------------
    The whole site refers to --font-body and nothing else, so this is the only
-   place a face is chosen. Exactly one `font` export must be live; comment the
-   other out, imports included, so next/font doesn't fetch a face nobody uses.
+   place a face is chosen. Exactly one `bodyFont` export must be live; comment
+   the other out, imports included, so next/font doesn't fetch a face nobody
+   uses.
 
-   Liquid Folio ships Montserrat: it comes from next/font/google (self-hosted
-   at build time, no network call at runtime) and the OFL lets anyone
-   redistribute it, which a template needs.
+   Montserrat ships by default: next/font/google self-hosts it at build time
+   (no runtime request to Google) and the OFL lets anyone redistribute it,
+   which a public repo needs. Any other Google face is a one-word change.
 
-     export const bodyFont = Montserrat({
-       subsets: ["latin"],
+   To use your own instead, drop a variable .woff2 into public/fonts and swap
+   the two blocks:
+
+     import localFont from "next/font/local";
+
+     export const bodyFont = localFont({
+       src: "./public/fonts/YourFace.woff2",
        variable: "--font-body",
        display: "swap",
+       weight: "100 800",
      });
 
-   To use your own face, drop a variable .woff2 in public/fonts and swap in the
-   localFont call below. Anything not open-licensed — Tofino included — cannot
-   be committed to a public repo; check your licence before pushing. */
-export const bodyFont = localFont({
-  src: "./public/fonts/TofinoVariable.woff2",
+   Mind the licence — most retail webfonts may not be committed to a public
+   repo. Keep those in a private fork, or load them from a CDN you pay for. */
+export const bodyFont = Montserrat({
+  subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
-  weight: "100 800",
 });
 
-/** Credit shown between the footer's two pill clusters. Retail licences often
-    require attribution and open ones deserve it; set to null for none. */
-export const fontCredit: FontCredit | null = {
-  name: "Tofino",
-  href: "https://alannamunro.com/fonts/tofino/",
-  //designer: "Alanna Munro",
-  //designerHref: "https://alannamunro.com/",
-};
+/** Optional credit rendered between the footer's two pill clusters — some
+    retail font licences require attribution, and this is where it goes.
+    Montserrat's OFL doesn't, so none is shown:
 
-/* Montserrat's, for reference when you switch back:
-   { name: "Montserrat",
-     href: "https://fonts.google.com/specimen/Montserrat",
-     designer: "Julieta Ulanovsky",
-     designerHref: "https://github.com/JulietaUla/Montserrat" } */
+      export const fontCredit: FontCredit | null = {
+        name: "Suisse Intl",
+        href: "https://www.swisstypefaces.com/fonts/suisse/",
+        designer: "Swiss Typefaces",
+        designerHref: "https://www.swisstypefaces.com/",
+      };
+*/
+export const fontCredit: FontCredit | null = null;
 
 /* --- shapes ---------------------------------------------------------------
    `accent` is a class from globals.css; leaving it off gives the site accent

@@ -102,6 +102,9 @@ export interface Project {
   icon: ProjectIcon;
   year: string;
   accent?: Accent;
+  /** Write these the way the technology writes itself — "ArgoCD", "Next.js",
+      "local LLMs". They render lowercase and reveal their real casing on
+      hover, so the styling is the stylesheet's job, not yours. */
   pills: string[];
   bio: string;
   /** live figures for the stat strip — see app/stats.ts for the helpers */
@@ -125,6 +128,7 @@ export interface ExperienceEntry {
   /** pulses the timeline dot — for the role you are in right now */
   live?: boolean;
   bio: string;
+  /** properly cased — see Project.pills */
   pills?: string[];
 }
 
@@ -310,7 +314,7 @@ export const projects: ProjectsContent = {
       icon: { emoji: "🕊️" },
       year: "2025 — today",
       accent: "accent-azure",
-      pills: ["swift", "local llms"],
+      pills: ["Swift", "local LLMs"],
       bio: "A Swift app that migrates your Twitter archive into Day One journal, and does it really well.",
       stats: async () => {
         const stars = await githubStars("JonathanSeriesX/dayoneXtwitter");
@@ -329,7 +333,7 @@ export const projects: ProjectsContent = {
       href: "https://everycase.org",
       icon: { src: "/icons/everycase.png" },
       year: "2023 — today",
-      pills: ["next.js", "mongodb", "data scraping"],
+      pills: ["Next.js", "MongoDB", "data scraping"],
       bio: "The one and only database of accessories made by Apple. Ultra-fast and non-intrusive, as every website should be.",
       /* straight from everycase's public CSVs; the fallbacks are the figures
          counted by hand on 2026-08-14 */
@@ -374,7 +378,7 @@ export const career: CareerContent = {
       meta: "under NDA",
       live: true,
       bio: "¯\\_(ツ)_/¯",
-      pills: ["grafana", "argocd"],
+      pills: ["Grafana", "ArgoCD"],
     },
     {
       years: "2024–25",
@@ -382,7 +386,7 @@ export const career: CareerContent = {
       meta: "SRE · Porto",
       accent: "accent-emerald",
       bio: "Sharpened monitoring and alerting inside one of Europe's largest banking groups: refined Grafana dashboards and alert rules for faster incident detection, automated internal workflows with Ansible, and cut the vulnerability backlog by 36% through triage and targeted upgrades.",
-      pills: ["grafana", "ansible", "vuln triage"],
+      pills: ["Grafana", "Ansible", "vuln triage"],
     },
     {
       years: "2022–24",
@@ -390,7 +394,7 @@ export const career: CareerContent = {
       meta: "SRE · Podgorica",
       accent: "accent-azure",
       bio: "Led incident resolution for live trading systems — tuning ELK, Dynatrace, and Prometheus/Grafana until diagnosis took minutes, not hours. Ran production workloads on Docker and Kubernetes, optimised AWS for cost and fault tolerance, and automated CI/CD with Jenkins and GitLab across web and mobile.",
-      pills: ["kubernetes", "aws", "elk", "ci/cd"],
+      pills: ["Kubernetes", "AWS", "ELK", "CI/CD"],
     },
     { gap: true },
     {
@@ -399,7 +403,7 @@ export const career: CareerContent = {
       meta: "Saint Petersburg",
       accent: "accent-violet",
       bio: "Saint Petersburg State University of Aerospace Instrumentation — encryption, steganography, PKI, signal processing, and just enough x86 assembly to be dangerous.",
-      pills: ["cryptography", "pki", "x86 asm"],
+      pills: ["cryptography", "PKI", "x86 asm"],
     },
   ],
 };

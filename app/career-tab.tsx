@@ -66,7 +66,9 @@ export function CareerTab() {
                 {entry.pills && (
                   <ul className="tag-cloud mt-3">
                     {entry.pills.map((pill) => (
-                      <li key={pill} className="tag">
+                      /* see projects-tab.tsx — data-label reserves the width
+                         of the full-case form */
+                      <li key={pill} className="tag tag-case" data-label={pill}>
                         {pill}
                       </li>
                     ))}

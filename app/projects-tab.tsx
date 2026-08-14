@@ -45,7 +45,9 @@ export async function ProjectsTab() {
             {strips[i] && <p className="stat-strip">{strips[i]}</p>}
             <ul className="tag-cloud">
               {entry.pills.map((pill) => (
-                <li key={pill} className="tag">
+                /* data-label feeds the invisible full-case sizer in
+                   globals.css, which keeps the pill from resizing on hover */
+                <li key={pill} className="tag tag-case" data-label={pill}>
                   {pill}
                 </li>
               ))}

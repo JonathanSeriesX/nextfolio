@@ -835,6 +835,43 @@ h1 {
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 32%, transparent);
   }
 
+  /* Skill pills. They are written properly in site.config.tsx ("ArgoCD",
+     "local LLMs") and shown lowercase; hovering reveals the real casing.
+     text-transform is purely visual, so the DOM — and therefore screen
+     readers, search engines and copy-paste — always gets the true string.
+
+     The two pseudo-elements are that same string in both forms, as zero-height
+     clipped blocks: they paint nothing, but a block child still contributes
+     its max-content width to the pill, so the pill is always as wide as the
+     wider form and hovering never moves the cloud. Both are needed — capitals
+     are usually wider ("ArgoCD" > "argocd"), but not always, since a lowercase
+     "m" outruns a capital "M" in plenty of faces. */
+  .tag-case {
+    text-align: center;
+    text-transform: lowercase;
+  }
+
+  .tag-case::before,
+  .tag-case::after {
+    content: attr(data-label);
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  .tag-case::before {
+    text-transform: none;
+  }
+
+  .tag-case::after {
+    text-transform: lowercase;
+  }
+
+  .tag-case:hover {
+    text-transform: none;
+  }
+
   /* tags that swap their text on hover (formula 1 → #CL16, Ferrari red).
      Both texts share one grid cell so the pill keeps the width of the longer
      one — no size jump, no cursor flicker at the pill's edge. */

@@ -1,27 +1,33 @@
 import Image from "next/image";
 
+// Ordered for a single pass: opens on the specific ("big banks."), rolls
+// through the rest, and parks on the umbrella phrase — which is also the
+// aria-label below.
 const cycleWords = [
-  "all sorts of people.",
   "big banks.",
   "trading floors.",
   "Apple collectors.",
   "Day One users.",
+  "all sorts of people.",
 ];
 
 // The roll keyframes are generated from cycleWords, so the animation always
-// matches the row count — edit the list freely. Track = words + a duplicate
-// of the first, so the loop restart is seamless.
-const cycleRows = cycleWords.length + 1;
+// matches the row count — edit the list freely; the last word is where the
+// roll parks. It plays once per visit to the home tab (see .cycler-track in
+// globals.css), so no duplicate first row is needed anymore.
+const cycleRows = cycleWords.length;
 const cycleSlot = 100 / cycleWords.length;
 const cycleKeyframes = `@keyframes cycle {
 ${cycleWords
   .map((_, i) => {
     const from = (i * cycleSlot).toFixed(2);
-    const to = ((i + 1) * cycleSlot - 3).toFixed(2);
+    const to =
+      i === cycleWords.length - 1
+        ? "100.00"
+        : ((i + 1) * cycleSlot - 3).toFixed(2);
     return `  ${from}%, ${to}% { transform: translateY(calc(-100% * ${i} / ${cycleRows})); }`;
   })
   .join("\n")}
-  100% { transform: translateY(calc(-100% * ${cycleWords.length} / ${cycleRows})); }
 }`;
 const cycleDuration = `${(cycleWords.length * 2.4).toFixed(1)}s`;
 
@@ -143,9 +149,21 @@ async function getProjectStats() {
   return { cases: cases ?? 1331, devices: devices ?? 345, stars: stars ?? 19 };
 }
 
-const experience = [
+interface ExperienceEntry {
+  years: string;
+  name: string;
+  meta: string;
+  accent?: string;
+  live?: boolean;
+  bio: string;
+}
+
+// `{ gap: true }` rows render as a dashed stretch of the timeline lane — CV
+// silence made explicit. Card sides alternate over the cards only, so a gap
+// never breaks the zigzag rhythm.
+const experience: (ExperienceEntry | { gap: true })[] = [
   {
-    years: "2026 — today",
+    years: "nowadays",
     name: "Something special",
     meta: "under NDA",
     live: true,
@@ -155,24 +173,31 @@ const experience = [
     years: "2024–25",
     name: "BNP Paribas",
     meta: "SRE · Porto",
+    accent: "accent-emerald",
     bio: "Sharpened monitoring and alerting inside one of Europe's largest banking groups: refined Grafana dashboards and alert rules for faster incident detection, automated internal workflows with Ansible, and cut the vulnerability backlog by 36% through triage and targeted upgrades.",
   },
   {
     years: "2022–24",
     name: "Libertex Group",
     meta: "SRE · Podgorica",
+    accent: "accent-dayone",
     bio: "Led incident resolution for live trading systems — tuning ELK, Dynatrace, and Prometheus/Grafana until diagnosis took minutes, not hours. Ran production workloads on Docker and Kubernetes, optimised AWS for cost and fault tolerance, and automated CI/CD with Jenkins and GitLab across web and mobile.",
   },
+  { gap: true },
   {
     years: "2016–20",
     name: "BSc in Information Security",
     meta: "Saint Petersburg",
+    accent: "accent-violet",
     bio: "Saint Petersburg State University of Aerospace Instrumentation — encryption, steganography, PKI, signal processing, and just enough x86 assembly to be dangerous.",
   },
 ];
 
 export default async function Home() {
   const stats = await getProjectStats();
+  // zigzag side counter — advances per card, not per row, so gap rows keep
+  // the left/right alternation intact
+  let zigzagSide = 0;
   // keyed by project name — keep in sync with the `projects` array above
   const statStrips: Record<string, React.ReactNode> = {
     "Finest Woven": `${stats.cases.toLocaleString("en-GB")} cases · ${stats.devices} devices · $0/mo to run`,
@@ -238,7 +263,7 @@ export default async function Home() {
                     { "--cycle-duration": cycleDuration } as React.CSSProperties
                   }
                 >
-                  {[...cycleWords, cycleWords[0]].map((word, i) => (
+                  {cycleWords.map((word, i) => (
                     <span key={i}>{word}</span>
                   ))}
                 </span>
@@ -340,20 +365,32 @@ export default async function Home() {
           <p className="mono mb-8 text-muted">
             currently in Lisbon • open to relocation
           </p>
-          <ol className="timeline">
-            {experience.map((entry) => (
-              <li
-                key={entry.name}
-                className={`timeline-entry${entry.live ? " timeline-live" : ""}`}
-              >
-                <span className="timeline-year">{entry.years}</span>
-                <div>
-                  <span className="entry-name">{entry.name}</span>
-                  <span className="entry-meta">{entry.meta}</span>
-                  <p className="entry-bio">{entry.bio}</p>
-                </div>
-              </li>
-            ))}
+          <ol className="xp-zigzag">
+            {experience.map((entry, i) =>
+              "gap" in entry ? (
+                // direction class = the upcoming card's side, so the dashed
+                // crossing lands where that card's rail begins
+                <li
+                  key={`gap-${i}`}
+                  className={`xp-gap ${zigzagSide % 2 ? "xp-right" : "xp-left"}`}
+                  aria-hidden
+                />
+              ) : (
+                <li
+                  key={entry.name}
+                  className={`xp-row ${zigzagSide++ % 2 ? "xp-right" : "xp-left"}${entry.live ? " xp-live" : ""} ${entry.accent ?? ""}`}
+                >
+                  <div className="xp-card">
+                    <div className="xp-head">
+                      <span className="entry-name">{entry.name}</span>
+                      <span className="xp-years">{entry.years}</span>
+                    </div>
+                    <span className="entry-meta">{entry.meta}</span>
+                    <p className="entry-bio">{entry.bio}</p>
+                  </div>
+                </li>
+              ),
+            )}
           </ol>
         </article>
       </main>

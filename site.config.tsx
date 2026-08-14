@@ -68,7 +68,10 @@ export const fontCredit: FontCredit | null = null;
    `accent` is a class from globals.css; leaving it off gives the site accent
    (crimson). Add your own by declaring .accent-<name> alongside the others. */
 export type Accent =
-  "accent-azure" | "accent-amber" | "accent-violet" | "accent-emerald";
+  | "accent-azure"
+  | "accent-amber"
+  | "accent-violet"
+  | "accent-emerald";
 
 export type ProjectIcon = { src: string } | { emoji: string };
 
@@ -264,7 +267,7 @@ export const home: HomeContent = {
      rolls through the rest, and parks on the umbrella phrase. Any length works
      — the keyframes are generated from this list. */
   cycleWords: [
-    "international banks.",
+    "banks.",
     "trading floors.",
     "Apple collectors.",
     "Day One users.",

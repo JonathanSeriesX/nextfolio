@@ -872,6 +872,10 @@ h1 {
     align-items: center;
     flex-wrap: wrap;
     gap: 0.55em;
+    /* optical centring against the icon: the line box reserves descender
+       space below the baseline, so an all-cap-height name sits visibly
+       high when the box itself is centred */
+    transform: translateY(0.08em);
   }
 
   /* project titles are the links; preflight makes svg display:block, so the

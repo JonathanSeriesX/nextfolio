@@ -179,6 +179,7 @@ const experience: (ExperienceEntry | { gap: true })[] = [
     meta: "under NDA",
     live: true,
     bio: "¯\\_(ツ)_/¯",
+    pills: ["grafana", "argocd"],
   },
   {
     years: "2024–25",
@@ -376,7 +377,7 @@ export default async function Home() {
         </article>
 
         <article className="tab-panel panel-work">
-          <p className="mono mb-8 text-muted">
+          <p className="mono mb-8 text-center text-muted">
             currently in Lisbon • open to relocation
           </p>
           <ol className="xp-zigzag">

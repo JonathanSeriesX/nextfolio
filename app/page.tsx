@@ -51,7 +51,9 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl grow px-4 pb-4 sm:px-6">
+      {/* pb-8 mirrors the panels' 2rem margin-top, so the glass card floats
+          with equal breathing room above and below */}
+      <main className="mx-auto w-full max-w-3xl grow px-4 pb-8 sm:px-6">
         {/* Panels are matched to tabs by position — this order must mirror
             `tabs` in site.config.tsx. */}
         <HomeTab />

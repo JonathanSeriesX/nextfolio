@@ -38,6 +38,13 @@ export function HomeTab() {
           {home.headline}
           <span className="cycler" aria-label={home.cycleLabel}>
             <style>{cycleKeyframes}</style>
+            {/* invisible copy of the parked (last) word — it alone sizes the
+                box, so the sentence wraps like plain text on narrow
+                viewports; wider rolling words overflow the line's empty end
+                instead of reserving their width (see .cycler in globals.css) */}
+            <span className="cycler-sizer" aria-hidden>
+              {home.cycleWords[home.cycleWords.length - 1]}
+            </span>
             <span
               className="cycler-track"
               aria-hidden

@@ -1,25 +1,11 @@
 import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 
-import { site, socials } from "@/site.config";
+import { bodyFont, fontCredit, site, socials } from "@/site.config";
 
 import { ThemeSwitch } from "./theme-switch";
-
-/* The one place the typeface is chosen. globals.css only ever refers to
-   --font-body, so swapping this for another local file — or for a
-   next/font/google import — is a self-contained change.
-
-   Tofino is licensed, not redistributable: a fork of this site needs its own
-   face here and its own file in public/fonts. */
-const bodyFont = localFont({
-  src: "../public/fonts/TofinoVariable.woff2",
-  variable: "--font-body",
-  display: "swap",
-  weight: "100 800",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -58,6 +44,18 @@ export const viewport: Viewport = {
 
 const beaconToken = site.analytics.cloudflareBeaconToken;
 
+/* a credit is worth linking when there is somewhere to link to, and worth
+   printing either way */
+function Credited({ label, href }: { label: string; href?: string }) {
+  return href ? (
+    <a className="link" href={href} target="_blank" rel="noreferrer">
+      {label}
+    </a>
+  ) : (
+    <>{label}</>
+  );
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -95,6 +93,16 @@ export default function RootLayout({
                   </a>
                 ))}
               </nav>
+              {fontCredit && (
+                <p className="font-credit mono">
+                  font:{" "}
+                  <Credited label={fontCredit.name} href={fontCredit.href} /> by{" "}
+                  <Credited
+                    label={fontCredit.designer}
+                    href={fontCredit.designerHref}
+                  />
+                </p>
+              )}
               <ThemeSwitch />
             </div>
           </footer>

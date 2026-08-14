@@ -1038,6 +1038,15 @@ h1 {
     --accent: var(--c-emerald);
   }
 
+  /* typeface credit, centred in the gap between the footer's two pill
+     clusters. flex:1 lets it take whatever the pills leave over. */
+  .font-credit {
+    flex: 1;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.7em;
+  }
+
   /* glass icon segments — theme switch and social links share the look */
   .seg {
     display: inline-flex;
@@ -1131,22 +1140,36 @@ h1 {
     transition-delay: 680ms;
   }
 
-  /* cycling word list in the hero, pure CSS.
-     clip-path instead of overflow:hidden — a scrollable box's baseline is its
-     bottom edge, which never sits exactly on the h1 baseline; clip-path keeps
-     the natural first-word baseline, so the line is pixel-aligned with the
-     surrounding text. */
+  /* Cycling word list in the hero, pure CSS.
+     The box is sized by .cycler-sizer — an invisible copy of the PARKED
+     (last) word — not by the widest word: a widest-word box can't fit
+     beside the photo float on phones, so the browser drops it below the
+     float and the line falls out of the sentence's rhythm. The sizer is
+     also the first flex item, which pins the box's baseline to plain text.
+     clip-path instead of overflow:hidden — a scrollable box's baseline is
+     its bottom edge, which never sits exactly on the h1 baseline. The right
+     inset is open (-100vw) so rolling words wider than the parked one
+     overflow into the line's empty end instead of being cut. */
   .cycler {
+    position: relative;
     display: inline-flex;
-    /* keep the track at its natural stacked-row height — stretched to the
-       1.15em box it would break the percentage-based keyframe steps */
     align-items: flex-start;
     height: 1.15em;
-    clip-path: inset(0);
+    clip-path: inset(0 -100vw 0 0);
   }
 
-  /* @keyframes cycle is generated in page.tsx from the word list */
+  .cycler-sizer {
+    visibility: hidden;
+  }
+
+  /* @keyframes cycle is generated in home-tab.tsx from the word list */
   .cycler-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* absolutely positioned boxes shrink to the containing block (the
+       parked-word-sized .cycler) — max-content keeps rows on one line */
+    width: max-content;
     display: flex;
     flex-direction: column;
     color: var(--accent);
@@ -1225,6 +1248,13 @@ h1 {
     .photo-shell {
       margin: 0 0 0.75rem 1rem;
       border-radius: 26px;
+    }
+
+    /* order:1 pushes the credit past both pill clusters, so it wraps onto its
+       own line underneath rather than squeezing between them */
+    .font-credit {
+      order: 1;
+      flex-basis: 100%;
     }
   }
 

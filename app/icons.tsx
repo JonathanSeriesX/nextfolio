@@ -49,7 +49,7 @@ export function MailIcon() {
   );
 }
 
-/* external-link arrow, same glyph as everycase's LinkArrowIcon */
+/* external-link arrow, shown after an outbound project name */
 export function LinkArrowIcon() {
   return (
     <svg

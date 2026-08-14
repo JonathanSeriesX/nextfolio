@@ -24,16 +24,20 @@ export function HomeTab() {
   return (
     <article className="tab-panel stagger">
       <div className="flow-root">
-        <div className="photo-shell">
-          <Image
-            src={home.photo.src}
-            alt={home.photo.alt}
-            fill
-            sizes="176px"
-            priority
-            className="object-cover"
-          />
-        </div>
+        {/* the shell floats, so dropping it simply lets the hero run full
+            width — no layout branch needed */}
+        {home.photo && (
+          <div className="photo-shell">
+            <Image
+              src={home.photo.src}
+              alt={home.photo.alt}
+              fill
+              sizes="176px"
+              priority
+              className="object-cover"
+            />
+          </div>
+        )}
         <h1>
           {home.headline}
           <span className="cycler" aria-label={home.cycleLabel}>

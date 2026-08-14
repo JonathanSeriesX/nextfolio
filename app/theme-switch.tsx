@@ -59,7 +59,7 @@ export function ThemeSwitch() {
 
   // Cross-fade with the View Transitions API — except on iOS, where the
   // snapshot animation makes Safari paint an opaque plate behind its glass
-  // bottom pill (trick ported from everycase's ThemeControl).
+  // bottom pill.
   const pickTheme = (next: string) => {
     if (next === theme) return;
     const isIOS =

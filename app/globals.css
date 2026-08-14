@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Theme classes are set by next-themes (light / dark / black), so the dark
-   variant follows the class, not the media query — same setup as everycase. */
+   variant follows the class, not the media query. */
 @custom-variant dark (&:where(.dark, .black, .dark *, .black *));
 
 :root {
@@ -33,7 +33,7 @@
   --text-body: min(calc(0.5637vw + 1rem), 1.2875rem);
   --text-h1: calc(var(--text-body) * 1.4);
 
-  /* Static on purpose (ported from everycase): iOS 26 re-adapts its glass
+  /* Static on purpose: iOS 26 re-adapts its glass
      chrome whenever color-scheme CHANGES at runtime. Declared once, there
      is nothing to re-adapt when the site theme toggles. */
   color-scheme: light dark;
@@ -92,7 +92,7 @@ html {
   transition: background-color 0.2s ease;
 }
 
-/* Suppress the fade during instant theme swaps (iOS path), as everycase does. */
+/* Suppress the fade during instant theme swaps (iOS path). */
 html.no-theme-fade,
 html.no-theme-fade * {
   transition: none !important;

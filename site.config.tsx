@@ -135,8 +135,24 @@ export type ExperienceRow = ExperienceEntry | { gap: true };
 /* The three panels. Annotating each section (rather than letting TypeScript
    infer it) is what makes an editor autocomplete the fields below and flag a
    typo'd accent as you type. */
+export interface SiteConfig {
+  /** shown at the top left, and used as the OG site name */
+  wordmark: string;
+  title: string;
+  description: string;
+  url: string;
+  lang: string;
+  locale: string;
+  /** null ships no share image; drop a 1200×630 file in public/ to add one */
+  ogImage: { src: string; width: number; height: number; alt: string } | null;
+  twitter: { card: "summary" | "summary_large_image"; creator?: string };
+  themeColor: { light: string; dark: string };
+  analytics: { cloudflareBeaconToken?: string };
+}
+
 export interface HomeContent {
-  photo: { src: string; alt: string };
+  /** null drops the portrait and lets the hero run full width */
+  photo: { src: string; alt: string } | null;
   headline: ReactNode;
   cycleWords: string[];
   cycleLabel: string;
@@ -158,7 +174,7 @@ export interface CareerContent {
 
 /* --- site ---------------------------------------------------------------- */
 
-export const site = {
+export const site: SiteConfig = {
   /** shown at the top left, and used as the OG site name */
   wordmark: "me_irl",
   title: "me_irl",

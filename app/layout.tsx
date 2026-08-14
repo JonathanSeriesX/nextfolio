@@ -7,6 +7,10 @@ import { bodyFont, fontCredit, site, socials } from "@/site.config";
 
 import { ThemeSwitch } from "./theme-switch";
 
+/* no share image configured → the cards carry title and description only,
+   which is better than pointing crawlers at a file that isn't there */
+const og = site.ogImage;
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: site.title,
@@ -19,19 +23,14 @@ export const metadata: Metadata = {
     locale: site.locale,
     type: "website",
     url: site.url,
-    images: [
-      {
-        url: site.ogImage.src,
-        width: site.ogImage.width,
-        height: site.ogImage.height,
-        alt: site.ogImage.alt,
-      },
-    ],
+    images: og
+      ? [{ url: og.src, width: og.width, height: og.height, alt: og.alt }]
+      : undefined,
   },
   twitter: {
     card: site.twitter.card,
     creator: site.twitter.creator,
-    images: [site.ogImage.src],
+    images: og ? [og.src] : undefined,
   },
 };
 
@@ -106,9 +105,9 @@ export default function RootLayout({
               <ThemeSwitch />
             </div>
           </footer>
-          {/* Cloudflare Web Analytics — classic defer variant, as on everycase.
-              No token configured, no beacon: a fork stays untracked until its
-              owner sets NEXT_PUBLIC_CF_BEACON_TOKEN. */}
+          {/* Cloudflare Web Analytics, classic defer variant. No token configured,
+              no beacon: a fork stays untracked until its owner sets
+              NEXT_PUBLIC_CF_BEACON_TOKEN. */}
           {beaconToken && (
             <script
               defer

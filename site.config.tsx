@@ -1,0 +1,338 @@
+/* ===========================================================================
+   Liquid Folio — every word, link and number on the site lives in this file.
+   Nothing below is layout: swap the values, keep the shapes, and the design
+   follows. The components in app/ read from here and never hardcode content.
+
+   Fields that pair with something outside this file are flagged in comments —
+   the tab list mirrors the panel order in app/page.tsx, and themeColor mirrors
+   --paper in app/globals.css.
+   =========================================================================== */
+
+import type { ReactNode } from "react";
+
+import {
+  GitHubIcon,
+  LinkedInIcon,
+  MailIcon,
+  // XIcon,
+  // YouTubeIcon,
+} from "@/app/icons";
+import { countCsvRows, githubStars } from "@/app/stats";
+
+/* --- shapes ---------------------------------------------------------------
+   `accent` is a class from globals.css; leaving it off gives the site accent
+   (crimson). Add your own by declaring .accent-<name> alongside the others. */
+export type Accent =
+  "accent-azure" | "accent-amber" | "accent-violet" | "accent-emerald";
+
+export type ProjectIcon = { src: string } | { emoji: string };
+
+export interface Social {
+  label: string;
+  href: string;
+  Icon: () => ReactNode;
+}
+
+export interface Tab {
+  /** used for the radio/label pairing; must be unique */
+  id: string;
+  label: string;
+}
+
+export interface Interest {
+  label: string;
+  /** swapped in on hover, for a private joke or two */
+  hover?: string;
+}
+
+export interface Project {
+  name: string;
+  href: string;
+  icon: ProjectIcon;
+  year: string;
+  accent?: Accent;
+  pills: string[];
+  bio: string;
+  /** live figures for the stat strip — see app/stats.ts for the helpers */
+  stats?: () => Promise<ReactNode>;
+}
+
+export interface ReservedProject {
+  name: string;
+  icon: ProjectIcon;
+  accent?: Accent;
+  /** defaults to "soon" */
+  year?: string;
+  bio: string;
+}
+
+export interface ExperienceEntry {
+  years: string;
+  name: string;
+  meta: string;
+  accent?: Accent;
+  /** pulses the timeline dot — for the role you are in right now */
+  live?: boolean;
+  bio: string;
+  pills?: string[];
+}
+
+/** `{ gap: true }` renders a dashed stretch of the timeline: CV silence,
+    made explicit rather than papered over. */
+export type ExperienceRow = ExperienceEntry | { gap: true };
+
+/* The three panels. Annotating each section (rather than letting TypeScript
+   infer it) is what makes an editor autocomplete the fields below and flag a
+   typo'd accent as you type. */
+export interface HomeContent {
+  photo: { src: string; alt: string };
+  headline: ReactNode;
+  cycleWords: string[];
+  cycleLabel: string;
+  blurb: ReactNode;
+  interestsIntro: ReactNode;
+  interests: Interest[];
+}
+
+export interface ProjectsContent {
+  intro: ReactNode;
+  entries: Project[];
+  reserved: ReservedProject[];
+}
+
+export interface CareerContent {
+  intro: ReactNode;
+  entries: ExperienceRow[];
+}
+
+/* --- site ---------------------------------------------------------------- */
+
+export const site = {
+  /** shown at the top left, and used as the OG site name */
+  wordmark: "me_irl",
+  title: "me_irl",
+  description: "Evgenii Ostrovskii's personal page",
+  url: "https://evgenii.org",
+  lang: "en",
+  locale: "en_GB",
+
+  ogImage: {
+    src: "/me.jpg",
+    width: 800,
+    height: 800,
+    alt: "Evgenii Ostrovskii",
+  },
+
+  /* `summary` (not `summary_large_image`) keeps the photo as a small square
+     thumbnail beside the text */
+  twitter: {
+    card: "summary" as const,
+    creator: "@JonathanSeriesX",
+  },
+
+  /** browser chrome colour — keep in step with --paper in app/globals.css */
+  themeColor: {
+    light: "#f7f4ef",
+    dark: "#131110",
+  },
+
+  analytics: {
+    /** Cloudflare Web Analytics. Unset → no beacon is rendered at all.
+        Set NEXT_PUBLIC_CF_BEACON_TOKEN in .env.local (see .env.example). */
+    cloudflareBeaconToken: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN,
+  },
+};
+
+export const socials: Social[] = [
+  {
+    label: "GitHub",
+    href: "https://github.com/JonathanSeriesX",
+    Icon: GitHubIcon,
+  },
+  // { label: "X", href: "https://twitter.com/JonathanSeriesX", Icon: XIcon },
+  {
+    label: "LinkedIn",
+    href: "https://linkedin.com/in/jonathanseriesx",
+    Icon: LinkedInIcon,
+  },
+  // {
+  //   label: "YouTube",
+  //   href: "https://www.youtube.com/@intensifiedhipster",
+  //   Icon: YouTubeIcon,
+  // },
+  { label: "Email", href: "mailto:me@evgenii.org", Icon: MailIcon },
+];
+
+/* --- tabs ---------------------------------------------------------------
+   Two to six. The picker folds onto two rows on narrow viewports once there
+   are four or more (4 → 2+2, 5 → 3+2, 6 → 3+3), so long labels stay legible.
+   ORDER MATTERS: tab N shows the Nth panel rendered in app/page.tsx. */
+export const tabs: Tab[] = [
+  { id: "home", label: "home" },
+  { id: "projects", label: "projects" },
+  { id: "career", label: "career" },
+];
+
+/* --- home ---------------------------------------------------------------- */
+
+export const home: HomeContent = {
+  photo: { src: "/me.jpg", alt: "Evgenii" },
+
+  /* the line before the rolling words; the roll is appended inline */
+  headline: (
+    <>
+      Hi there, my name is Evgenii.
+      <br />I build stuff for{" "}
+    </>
+  ),
+
+  /* Ordered for a single pass: opens on the specific ("international banks."),
+     rolls through the rest, and parks on the umbrella phrase. Any length works
+     — the keyframes are generated from this list. */
+  cycleWords: [
+    "international banks.",
+    "trading floors.",
+    "Apple collectors.",
+    "Day One users.",
+    "people.",
+  ],
+  /** what a screen reader hears in place of the roll */
+  cycleLabel: "all sorts of people.",
+
+  blurb: (
+    <>
+      By day, I&apos;m a DevOps engineer keeping{" "}
+      <span className="mono">&lt;something_secret&gt;</span> observable,
+      automated, and exceeding SLOs.
+    </>
+  ),
+
+  interestsIntro: "By evening, I'm into:",
+  interests: [
+    { label: "home lab" },
+    { label: "computer hardware" },
+    { label: "digital photography" },
+    { label: "formula 1", hover: "#CL16" },
+    { label: "competitive tetris" },
+    { label: "indie games" },
+    { label: "micro-mobility" },
+    { label: "urbanism" },
+    { label: "right to repair" },
+    { label: "drum & bass" },
+  ],
+};
+
+/* --- projects ------------------------------------------------------------ */
+
+const everycaseDb =
+  "https://raw.githubusercontent.com/JonathanSeriesX/everycase/HEAD/database";
+
+export const projects: ProjectsContent = {
+  intro: (
+    <>
+      By night, I&apos;m fixing small gaps in this world one by one, and
+      probably with more care than they deserve.
+    </>
+  ),
+
+  /* newest first */
+  entries: [
+    {
+      name: "Twixodus",
+      href: "https://github.com/JonathanSeriesX/dayoneXtwitter",
+      icon: { emoji: "🕊️" },
+      year: "2025 — today",
+      accent: "accent-azure",
+      pills: ["swift", "local llms"],
+      bio: "A Swift app that migrates your Twitter archive into Day One journal, and does it really well.",
+      stats: async () => {
+        const stars = await githubStars("JonathanSeriesX/dayoneXtwitter");
+        return (
+          <>
+            <span className="star" aria-hidden>
+              ★
+            </span>{" "}
+            {stars ?? 19} on github · thousands of tweets imported
+          </>
+        );
+      },
+    },
+    {
+      name: "Finest Woven",
+      href: "https://everycase.org",
+      icon: { src: "/icons/everycase.png" },
+      year: "2023 — today",
+      pills: ["next.js", "mongodb", "data scraping"],
+      bio: "The one and only database of accessories made by Apple. Ultra-fast and non-intrusive, as every website should be.",
+      /* straight from everycase's public CSVs; the fallbacks are the figures
+         counted by hand on 2026-08-14 */
+      stats: async () => {
+        const [cases, devices] = await Promise.all([
+          countCsvRows(`${everycaseDb}/database.csv`),
+          countCsvRows(`${everycaseDb}/devices.csv`),
+        ]);
+        return `${(cases ?? 1331).toLocaleString("en-GB")} cases · ${devices ?? 345} devices · $0/mo to run`;
+      },
+    },
+  ],
+
+  /* placeholders for things that exist but have nowhere to live yet */
+  reserved: [
+    {
+      name: "Photography",
+      icon: { emoji: "📷" },
+      accent: "accent-amber",
+      bio: "I figured out a lovely way to process images from my mirrorless, but I've yet to figure out a nice way to publish them :/",
+    },
+    {
+      name: "DJing",
+      icon: { emoji: "🎧" },
+      accent: "accent-violet",
+      bio: "Mixes will land somewhere once my drum & bass folder stops being on fire.",
+    },
+  ],
+};
+
+/* --- career -------------------------------------------------------------- */
+
+export const career: CareerContent = {
+  intro: "currently in Lisbon • open to relocation",
+
+  /* newest first; each row hands its colour to the next as the timeline's
+     lane gradient, so reordering recolours the lane automatically */
+  entries: [
+    {
+      years: "nowadays",
+      name: "Something special",
+      meta: "under NDA",
+      live: true,
+      bio: "¯\\_(ツ)_/¯",
+      pills: ["grafana", "argocd"],
+    },
+    {
+      years: "2024–25",
+      name: "BNP Paribas",
+      meta: "SRE · Porto",
+      accent: "accent-emerald",
+      bio: "Sharpened monitoring and alerting inside one of Europe's largest banking groups: refined Grafana dashboards and alert rules for faster incident detection, automated internal workflows with Ansible, and cut the vulnerability backlog by 36% through triage and targeted upgrades.",
+      pills: ["grafana", "ansible", "vuln triage"],
+    },
+    {
+      years: "2022–24",
+      name: "Libertex Group",
+      meta: "SRE · Podgorica",
+      accent: "accent-azure",
+      bio: "Led incident resolution for live trading systems — tuning ELK, Dynatrace, and Prometheus/Grafana until diagnosis took minutes, not hours. Ran production workloads on Docker and Kubernetes, optimised AWS for cost and fault tolerance, and automated CI/CD with Jenkins and GitLab across web and mobile.",
+      pills: ["kubernetes", "aws", "elk", "ci/cd"],
+    },
+    { gap: true },
+    {
+      years: "2016–20",
+      name: "BSc in Information Security",
+      meta: "Saint Petersburg",
+      accent: "accent-violet",
+      bio: "Saint Petersburg State University of Aerospace Instrumentation — encryption, steganography, PKI, signal processing, and just enough x86 assembly to be dangerous.",
+      pills: ["cryptography", "pki", "x86 asm"],
+    },
+  ],
+};

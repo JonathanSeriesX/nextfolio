@@ -95,11 +95,17 @@ export default function RootLayout({
               {fontCredit && (
                 <p className="font-credit mono">
                   font:{" "}
-                  <Credited label={fontCredit.name} href={fontCredit.href} /> by{" "}
-                  <Credited
-                    label={fontCredit.designer}
-                    href={fontCredit.designerHref}
-                  />
+                  <Credited label={fontCredit.name} href={fontCredit.href} />
+                  {fontCredit.designer && (
+                    <>
+                      {" "}
+                      by{" "}
+                      <Credited
+                        label={fontCredit.designer}
+                        href={fontCredit.designerHref}
+                      />
+                    </>
+                  )}
                 </p>
               )}
               <ThemeSwitch />

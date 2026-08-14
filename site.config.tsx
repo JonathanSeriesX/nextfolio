@@ -51,8 +51,8 @@ export const bodyFont = localFont({
 export const fontCredit: FontCredit | null = {
   name: "Tofino",
   href: "https://alannamunro.com/fonts/tofino/",
-  designer: "Alanna Munro",
-  designerHref: "https://alannamunro.com/",
+  //designer: "Alanna Munro",
+  //designerHref: "https://alannamunro.com/",
 };
 
 /* Montserrat's, for reference when you switch back:
@@ -73,8 +73,8 @@ export interface FontCredit {
   /** the typeface */
   name: string;
   href?: string;
-  /** who drew it */
-  designer: string;
+  /** who drew it — omit to credit the face alone */
+  designer?: string;
   designerHref?: string;
 }
 

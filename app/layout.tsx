@@ -13,9 +13,8 @@ const tofino = localFont({
   weight: "100 800",
 });
 
-const title = "Evgenii Ostrovskii";
-const description =
-  "Personal website of Evgenii Ostrovskii — site reliability & DevOps engineer in Lisbon, Portugal.";
+const title = "me_irl";
+const description = "Evgenii Ostrovskii's personal page";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://evgenii.org"),
@@ -29,10 +28,21 @@ export const metadata: Metadata = {
     locale: "en_GB",
     type: "website",
     url: "https://evgenii.org",
+    images: [
+      {
+        url: "/me.jpg",
+        width: 800,
+        height: 800,
+        alt: "Evgenii Ostrovskii",
+      },
+    ],
   },
+  // `summary` (not `summary_large_image`) keeps the photo as a small square
+  // thumbnail beside the text
   twitter: {
     card: "summary",
     creator: "@JonathanSeriesX",
+    images: ["/me.jpg"],
   },
 };
 

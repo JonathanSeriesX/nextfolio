@@ -4,11 +4,11 @@ import Image from "next/image";
 // through the rest, and parks on the umbrella phrase — which is also the
 // aria-label below.
 const cycleWords = [
-  "big banks.",
+  "international banks.",
   "trading floors.",
   "Apple collectors.",
   "Day One users.",
-  "all sorts of people.",
+  "people.",
 ];
 
 // The roll keyframes are generated from cycleWords, so the animation always
@@ -156,6 +156,7 @@ interface ExperienceEntry {
   accent?: string;
   live?: boolean;
   bio: string;
+  pills?: string[];
 }
 
 // `{ gap: true }` rows render as a dashed stretch of the timeline lane — CV
@@ -175,6 +176,7 @@ const experience: (ExperienceEntry | { gap: true })[] = [
     meta: "SRE · Porto",
     accent: "accent-emerald",
     bio: "Sharpened monitoring and alerting inside one of Europe's largest banking groups: refined Grafana dashboards and alert rules for faster incident detection, automated internal workflows with Ansible, and cut the vulnerability backlog by 36% through triage and targeted upgrades.",
+    pills: ["grafana", "ansible", "vuln triage"],
   },
   {
     years: "2022–24",
@@ -182,6 +184,7 @@ const experience: (ExperienceEntry | { gap: true })[] = [
     meta: "SRE · Podgorica",
     accent: "accent-dayone",
     bio: "Led incident resolution for live trading systems — tuning ELK, Dynatrace, and Prometheus/Grafana until diagnosis took minutes, not hours. Ran production workloads on Docker and Kubernetes, optimised AWS for cost and fault tolerance, and automated CI/CD with Jenkins and GitLab across web and mobile.",
+    pills: ["kubernetes", "aws", "elk", "ci/cd"],
   },
   { gap: true },
   {
@@ -190,6 +193,7 @@ const experience: (ExperienceEntry | { gap: true })[] = [
     meta: "Saint Petersburg",
     accent: "accent-violet",
     bio: "Saint Petersburg State University of Aerospace Instrumentation — encryption, steganography, PKI, signal processing, and just enough x86 assembly to be dangerous.",
+    pills: ["cryptography", "pki", "x86 asm"],
   },
 ];
 
@@ -387,6 +391,15 @@ export default async function Home() {
                     </div>
                     <span className="entry-meta">{entry.meta}</span>
                     <p className="entry-bio">{entry.bio}</p>
+                    {entry.pills && (
+                      <ul className="tag-cloud mt-3">
+                        {entry.pills.map((pill) => (
+                          <li key={pill} className="tag">
+                            {pill}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </li>
               ),

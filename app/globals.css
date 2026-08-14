@@ -373,7 +373,7 @@ h1 {
     left: calc(var(--rail-gap) * -1);
     top: -1rem;
     bottom: 0;
-    width: 1px;
+    width: 2px;
     background: color-mix(in srgb, var(--accent) 30%, var(--rule));
   }
 
@@ -395,9 +395,10 @@ h1 {
     position: absolute;
     left: calc(var(--rail-gap) * -1);
     top: var(--dot-y);
-    width: 9px;
-    height: 9px;
-    transform: translate(-4px, -4.5px);
+    width: 11px;
+    height: 11px;
+    /* centre the dot on the 2px rail */
+    transform: translate(-4.5px, -5.5px);
     border-radius: 9999px;
     background: var(--accent);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
@@ -420,7 +421,6 @@ h1 {
     top: 0;
     bottom: 0;
     width: 0;
-    margin-left: -1px;
     border-left: 2px dashed color-mix(in srgb, var(--muted) 55%, transparent);
   }
 
@@ -460,8 +460,8 @@ h1 {
   @media (width >= 48rem) {
     .xp-row,
     .xp-gap {
-      --cross-h: 2.25rem; /* total crossing height (= row padding) */
-      --cross-turn: 1.25rem; /* where the horizontal run sits */
+      --cross-h: 4rem; /* total crossing height (= row padding) */
+      --cross-turn: 2rem; /* where the horizontal run sits */
     }
 
     .xp-row {
@@ -469,7 +469,7 @@ h1 {
     }
 
     .xp-card {
-      --rail-gap: 1.75rem;
+      --rail-gap: 2.25rem;
     }
 
     .xp-card::before {
@@ -480,14 +480,17 @@ h1 {
       top: var(--dot-y);
     }
 
+    /* cards hug the wall opposite their lane; the rail-side margin equals
+       --rail-gap, which puts the rail exactly on the row edge where the
+       crossing elbows terminate */
     .xp-left .xp-card {
-      margin-left: 1.75rem;
-      margin-right: 4.5rem;
+      margin-left: var(--rail-gap);
+      margin-right: 0;
     }
 
     .xp-right .xp-card {
-      margin-left: 4.5rem;
-      margin-right: 1.75rem;
+      margin-left: 0;
+      margin-right: var(--rail-gap);
     }
 
     .xp-right .xp-card::before,
@@ -503,26 +506,27 @@ h1 {
       position: absolute;
     }
 
-    /* crossing that lands on a RIGHT row: down the left rail, arc right */
+    /* crossing that lands on a RIGHT row: down the left rail, arc right —
+       each elbow is a full quarter-arc (radius = its segment height) */
     .xp-right::before {
       top: 0;
       left: 0;
       width: 55%;
       height: var(--cross-turn);
-      border-left: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
-      border-bottom-left-radius: 1.2rem;
+      border-left: 2px solid var(--rule);
+      border-bottom: 2px solid var(--rule);
+      border-bottom-left-radius: var(--cross-turn);
     }
 
     /* …across the lane, arc down onto this row's right rail */
     .xp-right::after {
-      top: calc(var(--cross-turn) - 1px);
+      top: calc(var(--cross-turn) - 2px);
       left: 45%;
       right: 0;
-      height: calc(var(--cross-h) - var(--cross-turn) + 1px);
-      border-right: 1px solid var(--rule);
-      border-top: 1px solid var(--rule);
-      border-top-right-radius: 1rem;
+      height: calc(var(--cross-h) - var(--cross-turn) + 2px);
+      border-right: 2px solid var(--rule);
+      border-top: 2px solid var(--rule);
+      border-top-right-radius: calc(var(--cross-h) - var(--cross-turn));
     }
 
     /* mirrored crossing landing on a LEFT row */
@@ -531,19 +535,19 @@ h1 {
       right: 0;
       width: 55%;
       height: var(--cross-turn);
-      border-right: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
-      border-bottom-right-radius: 1.2rem;
+      border-right: 2px solid var(--rule);
+      border-bottom: 2px solid var(--rule);
+      border-bottom-right-radius: var(--cross-turn);
     }
 
     .xp-left::after {
-      top: calc(var(--cross-turn) - 1px);
+      top: calc(var(--cross-turn) - 2px);
       right: 45%;
       left: 0;
-      height: calc(var(--cross-h) - var(--cross-turn) + 1px);
-      border-left: 1px solid var(--rule);
-      border-top: 1px solid var(--rule);
-      border-top-left-radius: 1rem;
+      height: calc(var(--cross-h) - var(--cross-turn) + 2px);
+      border-left: 2px solid var(--rule);
+      border-top: 2px solid var(--rule);
+      border-top-left-radius: calc(var(--cross-h) - var(--cross-turn));
     }
 
     /* nothing crosses into the first row, or into the row after a gap
@@ -557,38 +561,40 @@ h1 {
 
     /* a gap IS a crossing, just taller and dashed — the “- - - -” lane */
     .xp-gap {
-      --cross-h: 3.4rem;
-      --cross-turn: 2.4rem;
+      --cross-h: 5rem;
+      --cross-turn: 3rem;
       height: var(--cross-h);
     }
 
     .xp-gap::before,
     .xp-gap::after {
-      margin-left: 0;
       border-style: dashed;
       border-width: 0;
       border-color: color-mix(in srgb, var(--muted) 55%, transparent);
+      /* keep the dashed arcs as round as the solid ones, not 3rem */
+      border-bottom-left-radius: 2rem;
+      border-bottom-right-radius: 2rem;
     }
 
     .xp-gap.xp-right::before {
-      border-left-width: 1.5px;
-      border-bottom-width: 1.5px;
+      border-left-width: 2px;
+      border-bottom-width: 2px;
     }
 
     .xp-gap.xp-right::after {
-      border-right-width: 1.5px;
-      border-top-width: 1.5px;
+      border-right-width: 2px;
+      border-top-width: 2px;
     }
 
     .xp-gap.xp-left::before {
       left: auto;
-      border-right-width: 1.5px;
-      border-bottom-width: 1.5px;
+      border-right-width: 2px;
+      border-bottom-width: 2px;
     }
 
     .xp-gap.xp-left::after {
-      border-left-width: 1.5px;
-      border-top-width: 1.5px;
+      border-left-width: 2px;
+      border-top-width: 2px;
     }
   }
 

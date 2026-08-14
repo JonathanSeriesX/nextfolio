@@ -280,7 +280,11 @@ h1 {
   .tab-panel {
     display: none;
     margin-top: 2rem;
-    padding: clamp(1.5rem, 3.2vw, 2.25rem);
+    /* 4.41vw hits the 2.25rem cap at 816px — the same point the column and
+       --text-body freeze. A slope capping later (the old 3.2vw capped at
+       1125px) keeps reflowing the card's innards while the card itself
+       stays the same width. */
+    padding: clamp(1.5rem, 4.41vw, 2.25rem);
     border-radius: 44px;
     background: var(--glass);
     border: 1px solid var(--rule);
@@ -385,7 +389,9 @@ h1 {
     float: right;
     position: relative;
     overflow: hidden;
-    width: clamp(7rem, 22vw, 11rem);
+    /* 6rem floor lets the photo ease down a notch on phones (≤ ~436px)
+       instead of holding 7rem against an already-narrow column */
+    width: clamp(6rem, 22vw, 11rem);
     aspect-ratio: 1;
     margin: 0 0 1rem 1.5rem;
     border-radius: 34px;
@@ -760,6 +766,44 @@ h1 {
     height: 1.15em;
   }
 
+
+  /* phone-width compaction — the desktop glass chrome (36px panel padding
+     inside 24px page padding inside 24px card padding) leaves too little
+     room for actual words on a ~375px screen */
+  @media (width < 40rem) {
+    .tab-panel {
+      padding: 1.25rem 1.1rem;
+      border-radius: 32px;
+    }
+
+    .project-card {
+      padding: 1rem 1.1rem;
+      border-radius: 22px;
+    }
+
+    /* let the year drop below the icon+title instead of crushing the title:
+       the nowrap name otherwise overflows its min-width:0 box into the year */
+    .project-head {
+      flex-wrap: wrap;
+      row-gap: 0.1rem;
+    }
+
+    .project-title {
+      min-width: fit-content;
+    }
+
+    .project-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      font-size: 1.2rem;
+      border-radius: 12px;
+    }
+
+    .photo-shell {
+      margin: 0 0 0.75rem 1rem;
+      border-radius: 26px;
+    }
+  }
 
   /* grain overlay */
   .grain {

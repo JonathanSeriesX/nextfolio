@@ -57,6 +57,9 @@ export function CareerTab() {
               }
             >
               <div className="xp-card">
+                {/* refractive rim as a real child — this card's own pseudos
+                    are the timeline rail and dot */}
+                <span className="lg-rim" aria-hidden />
                 <div className="xp-head">
                   <span className="entry-name">{entry.name}</span>
                   <span className="xp-years">{entry.years}</span>

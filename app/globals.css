@@ -23,8 +23,19 @@
   --c-amber: #c07a10;
   --c-violet: #7a58d0;
   --c-emerald: #109467;
+  /* virtual light: --mxn/--myn are written by liquid-pointer.tsx, [-1, 1]
+     from the viewport centre, smoothed. Every shadow below leans away from
+     the pointer through these two lengths; with no JS (or reduced motion)
+     they default to 0 and every shadow is exactly what it always was. */
+  --lean-x: calc(var(--mxn, 0) * -1px);
+  --lean-y: calc(var(--myn, 0) * -1px);
+  /* specular glint that tracks the pointer across a hovered card */
+  --sheen: rgba(255, 255, 255, 0.3);
   --card-shadow:
-    0 24px 48px rgba(50, 42, 48, 0.13), 0 2px 10px rgba(50, 42, 48, 0.06);
+    calc(var(--lean-x) * 22) calc(24px + var(--lean-y) * 10) 48px
+      rgba(50, 42, 48, 0.13),
+    calc(var(--lean-x) * 4) calc(2px + var(--lean-y) * 2) 10px
+      rgba(50, 42, 48, 0.06);
   --spring: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Fluid below ~816px (where the 48rem column + padding stops growing),
@@ -49,7 +60,9 @@ html.dark {
   --glow-b: #b3541e45;
   --glass: rgba(36, 32, 30, 0.5);
   --thumb: rgba(66, 60, 56, 0.95);
-  --card-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+  --sheen: rgba(255, 255, 255, 0.11);
+  --card-shadow: calc(var(--lean-x) * 22) calc(24px + var(--lean-y) * 10) 50px
+    rgba(0, 0, 0, 0.5);
 }
 
 /* Pitch Black: everything from dark, on a true-black canvas. */
@@ -63,7 +76,9 @@ html.black {
   --glow-b: #b3541e38;
   --glass: rgba(24, 21, 20, 0.55);
   --thumb: rgba(52, 47, 44, 0.95);
-  --card-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
+  --sheen: rgba(255, 255, 255, 0.09);
+  --card-shadow: calc(var(--lean-x) * 22) calc(24px + var(--lean-y) * 10) 50px
+    rgba(0, 0, 0, 0.65);
 }
 
 /* dark-mode accent palette, shared by dark and pitch black */
@@ -267,13 +282,27 @@ h1 {
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);
+    /* the inset streak slides toward the light, the drop shadow away */
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.22),
-      0 8px 24px rgba(50, 42, 48, 0.08);
+      inset calc(var(--lean-x) * -2) 1px 0 rgba(255, 255, 255, 0.22),
+      calc(var(--lean-x) * 8) calc(8px + var(--lean-y) * 4) 24px
+        rgba(50, 42, 48, 0.08);
     flex: 1;
     /* 7.4rem per column reproduces the old 22rem cap at three tabs and gives
        a six-tab bar room to breathe; 100% keeps it inside the header */
     max-width: min(calc(var(--tab-cols) * 7.4rem), 100%);
+  }
+
+  /* the goo pass: both thumb copies live in here, blurred together and
+     re-sharpened by #lg-goo so mid-flight they read as one stretching drop
+     of liquid. The outer shadow moved up here as a drop-shadow — inside the
+     filter a box-shadow's soft alpha would be contrast-crushed into a ring. */
+  .tab-goo {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    filter: url(#lg-goo)
+      drop-shadow(calc(var(--lean-x) * 3) 2px 8px rgba(0, 0, 0, 0.18));
   }
 
   .tab-thumb {
@@ -301,10 +330,15 @@ h1 {
     );
     border-radius: 9999px;
     background: var(--thumb);
-    box-shadow:
-      0 2px 10px rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    transition: transform 0.5s var(--spring);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    /* the lead thumb: quick, with a slight overshoot for the snap */
+    transition: transform 0.42s cubic-bezier(0.3, 1.25, 0.4, 1);
+  }
+
+  /* the drag thumb: same journey, slower — the separation between the two
+     is what the goo filter turns into the stretch */
+  .tab-thumb-lag {
+    transition: transform 0.6s var(--spring);
   }
 
   .tab-bar label {
@@ -362,7 +396,53 @@ h1 {
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
     backdrop-filter: blur(24px) saturate(140%);
-    box-shadow: var(--card-shadow);
+    box-shadow:
+      inset calc(var(--lean-x) * -3) 1px 0 rgba(255, 255, 255, 0.14),
+      var(--card-shadow);
+  }
+
+  /* ---- refractive edges ----
+     A second backdrop pass through the #lg-lens displacement map: the map
+     is neutral over the middle half of the pane and bends the backdrop
+     progressively toward the centre in the outer bands, so every glass edge
+     lenses what's behind it — the iOS-glass look. The overlay is a separate
+     carrier on purpose: chaining url() into the element's own
+     backdrop-filter would void the whole chain (blur included) in browsers
+     without SVG-in-backdrop-filter support, while a paints-nothing overlay
+     degrades to today's plain blur. Chromium-only. Pseudo-element carriers
+     everywhere except .xp-card, whose pseudos are the timeline rail and
+     dot — career cards render a real .lg-rim span instead. */
+  .tab-panel::before,
+  .tab-bar::before,
+  .project-card::before,
+  .photo-shell::after,
+  .lg-rim {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* below the pane's content, above its background: anything painted
+       before the carrier lands in its backdrop and gets bent — at z-index 0
+       the pane's own text ends up in there as a displaced ghost copy */
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    -webkit-backdrop-filter: url(#lg-lens);
+    backdrop-filter: url(#lg-lens);
+  }
+
+  /* small panes bend gently — at full strength their own rounded corners
+     get dragged into view */
+  .tab-bar::before,
+  .photo-shell::after {
+    -webkit-backdrop-filter: url(#lg-lens-soft);
+    backdrop-filter: url(#lg-lens-soft);
+  }
+
+  /* the photo rim is the one carrier that must sit ABOVE its content: the
+     image is what it bends. Nothing else paints inside the shell, so there
+     is no text to ghost. */
+  .photo-shell::after {
+    z-index: 0;
   }
 
   /* Entrance via @starting-style transitions, not keyframes: animations on
@@ -432,18 +512,24 @@ h1 {
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);
-    box-shadow: 0 8px 24px rgba(50, 42, 48, 0.08);
+    box-shadow: calc(var(--lean-x) * 10) calc(8px + var(--lean-y) * 4) 24px
+      rgba(50, 42, 48, 0.08);
+    /* box-shadow is deliberately NOT transitioned: the shadow leans with
+       --lean-*, which the pointer script rewrites every frame, and Chromium
+       transitions interrupted that often freeze at their first frame. The
+       JS lerp already smooths the motion. */
     transition:
       transform 0.3s var(--spring),
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
+      border-color 0.3s ease;
   }
 
-  /* no hover lift: the rail and dot are anchored to the card, and the
-     timeline must never move under the pointer */
+  /* no hover lift (and no tilt, unlike .project-card): the rail and dot are
+     anchored to the card, and the timeline must never move under the
+     pointer. The glint it does get lives in the hover-media block below. */
   .xp-card:hover {
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 16%, transparent);
+    box-shadow: calc(var(--lean-x) * 12) calc(12px + var(--lean-y) * 5) 30px
+      color-mix(in srgb, var(--accent) 16%, transparent);
   }
 
   /* the card's slice of the line, faintly tinted by its accent; bleeds up
@@ -797,7 +883,8 @@ h1 {
     backdrop-filter: blur(20px) saturate(140%);
     box-shadow:
       inset 0 1px 12px rgba(15, 18, 28, 0.08),
-      0 8px 24px rgba(50, 42, 48, 0.1);
+      calc(var(--lean-x) * 10) calc(8px + var(--lean-y) * 4) 24px
+        rgba(50, 42, 48, 0.1);
   }
 
   /* interests tag cloud */
@@ -917,19 +1004,52 @@ h1 {
     border: 1px solid var(--rule);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);
-    box-shadow: 0 8px 24px rgba(50, 42, 48, 0.08);
+    box-shadow: calc(var(--lean-x) * 10) calc(8px + var(--lean-y) * 4) 24px
+      rgba(50, 42, 48, 0.08);
     text-decoration: none;
     color: inherit;
+    /* no box-shadow transition — same Chromium freeze as .xp-card */
     transition:
       transform 0.3s var(--spring),
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
+      border-color 0.3s ease;
   }
 
   .project-card:not(.reserved):hover {
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-    box-shadow: 0 16px 36px color-mix(in srgb, var(--accent) 20%, transparent);
+    box-shadow: calc(var(--lean-x) * 16) calc(16px + var(--lean-y) * 6) 36px
+      color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  /* pointer-following surface effects, only where a hover pointer exists.
+     --gx/--gy are the pointer inside the card, 0–100 (liquid-pointer.tsx):
+     the glint is a sheen bubble under the cursor, and project cards addi-
+     tionally tilt toward it — convex glass under a fingertip. The defaults
+     park the glint off-card and the tilt at 0deg, so without JS these rules
+     change nothing. */
+  @media (hover: hover) {
+    .project-card:not(.reserved):hover {
+      transform: perspective(750px)
+        rotateX(calc((50 - var(--gy, 50)) * 0.05deg))
+        rotateY(calc((var(--gx, 50) - 50) * 0.05deg)) translateY(-3px);
+      background:
+        radial-gradient(
+          10rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),
+          var(--sheen),
+          transparent 65%
+        ),
+        var(--glass);
+    }
+
+    .xp-card:hover {
+      background:
+        radial-gradient(
+          9rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),
+          var(--sheen),
+          transparent 65%
+        ),
+        var(--glass);
+    }
   }
 
   /* The lift moves the card off a pointer resting at its bottom edge, which

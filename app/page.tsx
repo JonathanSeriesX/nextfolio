@@ -41,7 +41,13 @@ export default function Home() {
               { "--tab-count": String(tabs.length) } as React.CSSProperties
             }
           >
-            <span className="tab-thumb" aria-hidden />
+            {/* two thumb copies under a goo filter: the fast one leads, the
+                slow one drags behind, and #lg-goo melts the pair into a
+                single blob that stretches and snaps between tabs */}
+            <span className="tab-goo" aria-hidden>
+              <span className="tab-thumb tab-thumb-lag" />
+              <span className="tab-thumb" />
+            </span>
             {tabs.map((tab) => (
               <label key={tab.id} htmlFor={`tab-${tab.id}`}>
                 {tab.label}

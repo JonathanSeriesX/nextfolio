@@ -5,6 +5,8 @@ import { ThemeProvider } from "next-themes";
 
 import { bodyFont, fontCredit, site, socials } from "@/site.config";
 
+import { LiquidDefs } from "./liquid-defs";
+import { LiquidPointer } from "./liquid-pointer";
 import { ThemeSwitch } from "./theme-switch";
 
 /* no share image configured → the cards carry title and description only,
@@ -74,6 +76,8 @@ export default function RootLayout({
           enableColorScheme={false}
         >
           <div className="grain" aria-hidden />
+          <LiquidDefs />
+          <LiquidPointer />
           {children}
           <footer className="mx-auto w-full max-w-3xl px-6">
             <div className="section flex flex-wrap items-center justify-between gap-4">

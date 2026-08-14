@@ -56,27 +56,35 @@ export function CareerTab() {
                 } as React.CSSProperties
               }
             >
+              {/* .xp-card is a static shell that owns the rail and dot
+                  pseudos; .xp-box is the glass that grows on hover, so the
+                  timeline never moves. The rim is a real child span — the
+                  shell's own pseudos are taken. */}
               <div className="xp-card">
-                {/* refractive rim as a real child — this card's own pseudos
-                    are the timeline rail and dot */}
-                <span className="lg-rim" aria-hidden />
-                <div className="xp-head">
-                  <span className="entry-name">{entry.name}</span>
-                  <span className="xp-years">{entry.years}</span>
+                <div className="xp-box">
+                  <span className="lg-rim" aria-hidden />
+                  <div className="xp-head">
+                    <span className="entry-name">{entry.name}</span>
+                    <span className="xp-years">{entry.years}</span>
+                  </div>
+                  <span className="entry-meta">{entry.meta}</span>
+                  <p className="entry-bio">{entry.bio}</p>
+                  {entry.pills && (
+                    <ul className="tag-cloud mt-3">
+                      {entry.pills.map((pill) => (
+                        /* see projects-tab.tsx — data-label reserves the
+                           width of the full-case form */
+                        <li
+                          key={pill}
+                          className="tag tag-case"
+                          data-label={pill}
+                        >
+                          {pill}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <span className="entry-meta">{entry.meta}</span>
-                <p className="entry-bio">{entry.bio}</p>
-                {entry.pills && (
-                  <ul className="tag-cloud mt-3">
-                    {entry.pills.map((pill) => (
-                      /* see projects-tab.tsx — data-label reserves the width
-                         of the full-case form */
-                      <li key={pill} className="tag tag-case" data-label={pill}>
-                        {pill}
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </li>
           );

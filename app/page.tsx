@@ -43,7 +43,13 @@ export default function Home() {
           >
             {/* two thumb copies under a goo filter: the fast one leads, the
                 slow one drags behind, and #lg-goo melts the pair into a
-                single blob that stretches and snaps between tabs */}
+                single blob that stretches and snaps between tabs. The
+                shadow rides two filter-free half-strength twins, one per
+                timing, so both ends of the stretched blob keep a shadow —
+                a single twin gets covered by the blob's far end, and Safari
+                drops shadows chained into the goo filter. */}
+            <span className="tab-thumb tab-thumb-shadow tab-thumb-lag" aria-hidden />
+            <span className="tab-thumb tab-thumb-shadow" aria-hidden />
             <span className="tab-goo" aria-hidden>
               <span className="tab-thumb tab-thumb-lag" />
               <span className="tab-thumb" />

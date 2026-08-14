@@ -295,14 +295,15 @@ h1 {
 
   /* the goo pass: both thumb copies live in here, blurred together and
      re-sharpened by #lg-goo so mid-flight they read as one stretching drop
-     of liquid. The outer shadow moved up here as a drop-shadow — inside the
-     filter a box-shadow's soft alpha would be contrast-crushed into a ring. */
+     of liquid. No shadow in here: inside the filter a box-shadow's soft
+     alpha would be contrast-crushed into a ring, and Safari drops a
+     drop-shadow() chained after the url() — the shadow rides a separate
+     filter-free .tab-thumb-shadow behind this wrapper instead. */
   .tab-goo {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    filter: url(#lg-goo)
-      drop-shadow(calc(var(--lean-x) * 3) 2px 8px rgba(0, 0, 0, 0.18));
+    filter: url(#lg-goo);
   }
 
   .tab-thumb {
@@ -339,6 +340,16 @@ h1 {
      is what the goo filter turns into the stretch */
   .tab-thumb-lag {
     transition: transform 0.6s var(--spring);
+  }
+
+  /* the shadow twins: one rides the lead timing, one the lag, each outside
+     the goo filter and painting only an outer shadow (outer box-shadows
+     clip to outside the border box, so the transparent bodies leave clean
+     halos under both ends of the blob). Half strength each — at rest they
+     stack on the same spot, compounding to the intended darkness. */
+  .tab-thumb-shadow {
+    background: none;
+    box-shadow: calc(var(--lean-x) * 3) 2px 10px rgba(0, 0, 0, 0.1);
   }
 
   .tab-bar label {
@@ -402,16 +413,18 @@ h1 {
   }
 
   /* ---- refractive edges ----
-     A second backdrop pass through the #lg-lens displacement map: the map
-     is neutral over the middle half of the pane and bends the backdrop
-     progressively toward the centre in the outer bands, so every glass edge
-     lenses what's behind it — the iOS-glass look. The overlay is a separate
-     carrier on purpose: chaining url() into the element's own
-     backdrop-filter would void the whole chain (blur included) in browsers
-     without SVG-in-backdrop-filter support, while a paints-nothing overlay
-     degrades to today's plain blur. Chromium-only. Pseudo-element carriers
-     everywhere except .xp-card, whose pseudos are the timeline rail and
-     dot — career cards render a real .lg-rim span instead. */
+     A second backdrop pass through the #lg-lens displacement map: neutral
+     across the middle, each edge bends the backdrop toward the centre
+     through an eased band, and every bend fades out entirely before it
+     reaches a corner — corners are where straight x/y bands used to
+     collide and read as folded paper. The overlay is a separate carrier on
+     purpose: chaining url() into the element's own backdrop-filter would
+     void the whole chain (blur included) in browsers without
+     SVG-in-backdrop-filter support, while a paints-nothing overlay
+     degrades cleanly — Chromium refracts, Safari and Firefox keep their
+     plain blur. Pseudo-element carriers everywhere except the career
+     cards, whose shell pseudos are the timeline rail and dot — those
+     render a real .lg-rim span inside .xp-box instead. */
   .tab-panel::before,
   .tab-bar::before,
   .project-card::before,
@@ -438,9 +451,8 @@ h1 {
     backdrop-filter: url(#lg-lens-soft);
   }
 
-  /* the photo rim is the one carrier that must sit ABOVE its content: the
-     image is what it bends. Nothing else paints inside the shell, so there
-     is no text to ghost. */
+  /* the photo rim sits ABOVE its content: the image is what it bends.
+     Nothing else paints inside the shell, so there is nothing to ghost. */
   .photo-shell::after {
     z-index: 0;
   }
@@ -496,15 +508,25 @@ h1 {
     padding-top: 0;
   }
 
+  /* the static shell: it owns the rail and dot pseudos and never
+     transforms, so however the glass box inside it swells, the timeline
+     holds perfectly still */
   .xp-card {
     /* dot centre, measured from the card top: padding + half the title line */
     --dot-y: 2.05rem;
     /* how far the rail sits off the card edge */
     --rail-gap: 1.6rem;
     position: relative;
+    margin-left: 2.1rem;
+  }
+
+  /* the visible glass, free to grow on hover; tilt stays
+     .project-card-only — a rotation would still swing the shell's rail
+     visually out of the lane */
+  .xp-box {
+    position: relative;
     display: flex;
     flex-direction: column;
-    margin-left: 2.1rem;
     padding: 0.95rem 1.2rem 1.05rem;
     /* same radius as .project-card */
     border-radius: 28px;
@@ -523,10 +545,7 @@ h1 {
       border-color 0.3s ease;
   }
 
-  /* no hover lift (and no tilt, unlike .project-card): the rail and dot are
-     anchored to the card, and the timeline must never move under the
-     pointer. The glint it does get lives in the hover-media block below. */
-  .xp-card:hover {
+  .xp-card:hover .xp-box {
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     box-shadow: calc(var(--lean-x) * 12) calc(12px + var(--lean-y) * 5) 30px
       color-mix(in srgb, var(--accent) 16%, transparent);
@@ -534,18 +553,16 @@ h1 {
 
   /* the card's slice of the line, faintly tinted by its accent; bleeds up
      through the row padding so consecutive slices connect (phone rail) */
-  /* Rail offsets are corrected by the card's 1px border everywhere: the
-     pseudos are positioned against the padding box, which sits 1px inside
-     the border box the margins are measured from. Without the correction
-     every rail is 1px off the crossings drawn on the row itself. */
+  /* No border corrections here: the shell is borderless (the 1px border
+     lives on .xp-box), so pseudo offsets measure straight from the box the
+     margins are measured from. */
   .xp-card::before {
     content: "";
     position: absolute;
-    left: calc(var(--rail-gap) * -1 - 1px);
-    /* bleed up through the row padding to the exact row boundary — the
-       extra -1px compensates the card border, as everywhere else */
-    top: calc(-1rem - 1px);
-    bottom: -1px;
+    left: calc(var(--rail-gap) * -1);
+    /* bleed up through the row padding to the exact row boundary */
+    top: -1rem;
+    bottom: 0;
     width: 2px;
     background: color-mix(in srgb, var(--accent) 30%, var(--rule));
   }
@@ -556,7 +573,7 @@ h1 {
 
   .xp-gap + .xp-row .xp-card::before {
     /* start exactly at the row boundary where the gap's arc ends */
-    top: -1px;
+    top: 0;
   }
 
   .xp-row:last-child .xp-card::before {
@@ -567,7 +584,7 @@ h1 {
   .xp-card::after {
     content: "";
     position: absolute;
-    left: calc(var(--rail-gap) * -1 - 1px);
+    left: calc(var(--rail-gap) * -1);
     top: var(--dot-y);
     width: 11px;
     height: 11px;
@@ -652,9 +669,8 @@ h1 {
     }
 
     .xp-card::before {
-      /* -1px again: bridge the card's border-width so the rail meets the
-         crossing with no pinhole */
-      top: -1px;
+      /* meet the crossing exactly at the row boundary */
+      top: 0;
     }
 
     .xp-row:first-child .xp-card::before {
@@ -674,13 +690,12 @@ h1 {
       margin-right: var(--rail-gap);
     }
 
-    /* mirror of the base offset: 100% is the padding-box width (2px of
-       border short of the margin box), so +1px per border side lands the
-       rail on [row-width - 2px, row-width] — exactly the elbows'
-       border-right band */
+    /* mirror of the base offset: 100% + the gap crosses the borderless
+       shell, minus the rail's own 2px width lands it on
+       [row-width - 2px, row-width] — exactly the elbows' border-right band */
     .xp-right .xp-card::before,
     .xp-right .xp-card::after {
-      left: calc(100% + var(--rail-gap) - 1px);
+      left: calc(100% + var(--rail-gap) - 2px);
     }
 
     /* Crossing into this row, in three pieces so the colour can travel:
@@ -922,6 +937,12 @@ h1 {
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 32%, transparent);
   }
 
+  /* the hero's hobby pills sit directly on the panel at full body scale —
+     the card-sized swell reads oversized there, so they barely breathe */
+  .hobby-cloud .tag:hover {
+    transform: scale(1.01);
+  }
+
   /* Skill pills. They are written properly in site.config.tsx ("ArgoCD",
      "local LLMs") and shown lowercase; hovering reveals the real casing.
      text-transform is purely visual, so the DOM — and therefore screen
@@ -1041,7 +1062,9 @@ h1 {
         var(--glass);
     }
 
-    .xp-card:hover {
+    .xp-card:hover .xp-box {
+      /* gentle swell; the shell (and with it the rail and dot) stays put */
+      transform: scale(1.01);
       background:
         radial-gradient(
           9rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),
@@ -1376,7 +1399,7 @@ h1 {
     }
 
     .project-card,
-    .xp-card {
+    .xp-box {
       border-radius: 22px;
     }
 

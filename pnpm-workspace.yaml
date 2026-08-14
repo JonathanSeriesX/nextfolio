@@ -1,5 +1,6 @@
+minimumReleaseAge: 240
 allowBuilds:
-  '@tailwindcss/oxide': true
+  "@tailwindcss/oxide": true
   sharp: true
   unrs-resolver: true
 # eslint-config-next's inner plugins (react, import, jsx-a11y) don't declare
@@ -7,17 +8,4 @@ allowBuilds:
 # the runtime gap. Remove when the plugins catch up.
 peerDependencyRules:
   allowedVersions:
-    eslint: '10'
-minimumReleaseAgeExclude:
-  - '@next/eslint-plugin-next@16.3.1'
-  - eslint-config-next@16.3.1
-  - '@next/env@16.3.1'
-  - '@next/swc-darwin-arm64@16.3.1'
-  - '@next/swc-darwin-x64@16.3.1'
-  - '@next/swc-linux-arm64-gnu@16.3.1'
-  - '@next/swc-linux-arm64-musl@16.3.1'
-  - '@next/swc-linux-x64-gnu@16.3.1'
-  - '@next/swc-linux-x64-musl@16.3.1'
-  - '@next/swc-win32-arm64-msvc@16.3.1'
-  - '@next/swc-win32-x64-msvc@16.3.1'
-  - next@16.3.1
+    eslint: "10"

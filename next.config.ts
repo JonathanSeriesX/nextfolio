@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
-  allowedDevOrigins: ["*.orb.local"],
 };
 
 export default nextConfig;

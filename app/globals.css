@@ -475,9 +475,8 @@ h1 {
     margin-left: 2.1rem;
   }
 
-  /* the visible glass, free to grow on hover; tilt stays
-     .project-card-only — a rotation would still swing the shell's rail
-     visually out of the lane */
+  /* the visible glass, free to lift and tilt on hover — only the box
+     transforms, so the shell's rail and dot never move */
   .xp-box {
     position: relative;
     display: flex;
@@ -501,6 +500,7 @@ h1 {
   }
 
   .xp-card:hover .xp-box {
+    transform: translateY(-2.7px);
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     box-shadow: calc(var(--lean-x) * 12) calc(12px + var(--lean-y) * 5) 30px
       color-mix(in srgb, var(--accent) 16%, transparent);
@@ -986,7 +986,7 @@ h1 {
   }
 
   .project-card:not(.reserved):hover {
-    transform: translateY(-3px);
+    transform: translateY(-2.7px);
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     box-shadow: calc(var(--lean-x) * 16) calc(16px + var(--lean-y) * 6) 36px
       color-mix(in srgb, var(--accent) 20%, transparent);
@@ -994,30 +994,22 @@ h1 {
 
   /* pointer-following surface effects, only where a hover pointer exists.
      --gx/--gy are the pointer inside the card, 0–100 (liquid-pointer.tsx):
-     the glint is a sheen bubble under the cursor, and project cards addi-
-     tionally tilt toward it — convex glass under a fingertip. The defaults
-     park the glint off-card and the tilt at 0deg, so without JS these rules
-     change nothing. */
+     the glint is a sheen bubble under the cursor, and both card kinds lift
+     and tilt toward it — convex glass under a fingertip. Career cards do
+     it via .xp-box, so the shell's rail and dot hold still, and their
+     hover state is bound to the static shell, so the moving glass can
+     never carry itself off the pointer. The defaults park the glint
+     off-card and the tilt at 0deg, so without JS these rules change
+     nothing. */
   @media (hover: hover) {
-    .project-card:not(.reserved):hover {
+    .project-card:not(.reserved):hover,
+    .xp-card:hover .xp-box {
       transform: perspective(750px)
-        rotateX(calc((50 - var(--gy, 50)) * 0.05deg))
-        rotateY(calc((var(--gx, 50) - 50) * 0.05deg)) translateY(-3px);
+        rotateX(calc((50 - var(--gy, 50)) * 0.045deg))
+        rotateY(calc((var(--gx, 50) - 50) * 0.045deg)) translateY(-2.7px);
       background:
         radial-gradient(
           10rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),
-          var(--sheen),
-          transparent 65%
-        ),
-        var(--glass);
-    }
-
-    .xp-card:hover .xp-box {
-      /* gentle swell; the shell (and with it the rail and dot) stays put */
-      transform: scale(1.02);
-      background:
-        radial-gradient(
-          9rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),
           var(--sheen),
           transparent 65%
         ),

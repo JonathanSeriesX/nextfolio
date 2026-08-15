@@ -58,11 +58,9 @@ export function CareerTab() {
             >
               {/* .xp-card is a static shell that owns the rail and dot
                   pseudos; .xp-box is the glass that grows on hover, so the
-                  timeline never moves. The rim is a real child span — the
-                  shell's own pseudos are taken. */}
+                  timeline never moves */}
               <div className="xp-card">
                 <div className="xp-box">
-                  <span className="lg-rim" aria-hidden />
                   <div className="xp-head">
                     <span className="entry-name">{entry.name}</span>
                     <span className="xp-years">{entry.years}</span>

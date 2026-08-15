@@ -67,9 +67,7 @@ export function HomeTab() {
       <div className="mt-6 border-t border-rule pt-6 text-muted">
         <p>{home.interestsIntro}</p>
       </div>
-      {/* hobby-cloud: hero pills swell more gently than the pills inside
-          cards — see .hobby-cloud in globals.css */}
-      <ul className="tag-cloud hobby-cloud mt-4">
+      <ul className="tag-cloud mt-4">
         {home.interests.map((tag) => (
           <li key={tag.label} className={`tag${tag.hover ? " tag-swap" : ""}`}>
             {tag.hover ? (

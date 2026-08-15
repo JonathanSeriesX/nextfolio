@@ -412,51 +412,6 @@ h1 {
       var(--card-shadow);
   }
 
-  /* ---- refractive edges ----
-     A second backdrop pass through the #lg-lens displacement map: neutral
-     across the middle, each edge bends the backdrop toward the centre
-     through an eased band, and every bend fades out entirely before it
-     reaches a corner — corners are where straight x/y bands used to
-     collide and read as folded paper. The overlay is a separate carrier on
-     purpose: chaining url() into the element's own backdrop-filter would
-     void the whole chain (blur included) in browsers without
-     SVG-in-backdrop-filter support, while a paints-nothing overlay
-     degrades cleanly — Chromium refracts, Safari and Firefox keep their
-     plain blur. Pseudo-element carriers everywhere except the career
-     cards, whose shell pseudos are the timeline rail and dot — those
-     render a real .lg-rim span inside .xp-box instead. */
-  .tab-panel::before,
-  .tab-bar::before,
-  .project-card::before,
-  .photo-shell::after,
-  .lg-rim {
-    content: "";
-    position: absolute;
-    inset: 0;
-    /* below the pane's content, above its background: anything painted
-       before the carrier lands in its backdrop and gets bent — at z-index 0
-       the pane's own text ends up in there as a displaced ghost copy */
-    z-index: -1;
-    border-radius: inherit;
-    pointer-events: none;
-    -webkit-backdrop-filter: url(#lg-lens);
-    backdrop-filter: url(#lg-lens);
-  }
-
-  /* small panes bend gently — at full strength their own rounded corners
-     get dragged into view */
-  .tab-bar::before,
-  .photo-shell::after {
-    -webkit-backdrop-filter: url(#lg-lens-soft);
-    backdrop-filter: url(#lg-lens-soft);
-  }
-
-  /* the photo rim sits ABOVE its content: the image is what it bends.
-     Nothing else paints inside the shell, so there is nothing to ghost. */
-  .photo-shell::after {
-    z-index: 0;
-  }
-
   /* Entrance via @starting-style transitions, not keyframes: animations on
      display:none → flex re-renders replay unreliably in Chromium, while
      @starting-style is specified to fire on every "becomes rendered". */
@@ -929,18 +884,13 @@ h1 {
       box-shadow 0.25s ease;
   }
 
-  /* scale is paint-only, so the cloud's layout never shifts */
+  /* scale is paint-only, so the cloud's layout never shifts; the swell is
+     barely-there on purpose — anything bigger reads oversized */
   .tag:hover {
     color: var(--accent);
     border-color: var(--accent);
-    transform: scale(1.07);
+    transform: scale(1.02);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 32%, transparent);
-  }
-
-  /* the hero's hobby pills sit directly on the panel at full body scale —
-     the card-sized swell reads oversized there, so they barely breathe */
-  .hobby-cloud .tag:hover {
-    transform: scale(1.01);
   }
 
   /* Skill pills. They are written properly in site.config.tsx ("ArgoCD",
@@ -1064,7 +1014,7 @@ h1 {
 
     .xp-card:hover .xp-box {
       /* gentle swell; the shell (and with it the rail and dot) stays put */
-      transform: scale(1.01);
+      transform: scale(1.02);
       background:
         radial-gradient(
           9rem circle at calc(var(--gx, 50) * 1%) calc(var(--gy, -400) * 1%),

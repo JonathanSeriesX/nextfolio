@@ -316,7 +316,7 @@ export const projects: ProjectsContent = {
   entries: [
     {
       name: "Twixodus",
-      href: "https://github.com/JonathanSeriesX/dayoneXtwitter",
+      href: "https://twixodus.evgenii.org",
       icon: { emoji: "🕊️" },
       year: "2025 — today",
       accent: "accent-azure",
